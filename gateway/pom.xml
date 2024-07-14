@@ -14,7 +14,7 @@
 	<name>gateway</name>
 	<description>gateway for microservice</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<spring-cloud.version>2021.0.8</spring-cloud.version>
 	</properties>
 	<dependencies>

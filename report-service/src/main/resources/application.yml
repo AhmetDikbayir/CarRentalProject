@@ -1,0 +1,10 @@
+
+server:
+  port: 8089
+
+spring:
+  application:
+    name: report-service
+
+  config:
+    import: optional:configserver:http://localhost:8090
