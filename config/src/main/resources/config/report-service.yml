@@ -1,0 +1,18 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8097/eureka
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sbootintro_db
+    username: db_user
+    password: db_password
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      '[hibernate.format_sql]': true
