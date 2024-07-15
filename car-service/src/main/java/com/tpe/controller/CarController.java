@@ -35,6 +35,11 @@ public class CarController {
 
     }
 
+    //Not:update car
+    //Not:delete car
+    //Not:upload image file
+    //Not:get all image file
+
     //Not: getAllCars() *********************************************************************
     @GetMapping
     public ResponseEntity<List<CarDTO>> getAllCars(){
@@ -48,4 +53,6 @@ public class CarController {
        CarDTO carDTO = carService.getById(id);
        return ResponseEntity.ok(carDTO);
     }
+
+
 }
