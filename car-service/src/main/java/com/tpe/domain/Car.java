@@ -35,4 +35,7 @@ public class Car {
     @Column(nullable = false)
     private Integer age;
 
+    @Column(nullable = false, unique = true)
+    private String numberPlate;
+
 }

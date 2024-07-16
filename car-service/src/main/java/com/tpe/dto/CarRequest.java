@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
 
 
 @Getter
@@ -14,17 +15,22 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CarRequest {
 
+    @NotNull
     private String brand;
 
-
+    @NotNull
     private String model;
 
-
+    @NotNull
     private Integer doors;
 
+    @NotNull
+    private Double pricePerDay;
 
-    private Double pricePerHour;
-
-
+    @NotNull
     private Integer age;
+
+    @NotNull
+    //regex
+    private String numberPlate;
 }

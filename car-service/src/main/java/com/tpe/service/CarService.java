@@ -32,12 +32,22 @@ public class CarService {
     //Not: saveCar() *********************************************************************
     public void saveCar(CarRequest carRequest) {
 
+
+
+        if(carRepository.existsByNumberPlate(carRequest.getNumberPlate())){
+            throw new ConflictException(String.format(ErrorMessages.ALREADY_REGISTER_MESSAGE_USERNAME, username));
+        }
+
+
         Car car = modelMapper.map(carRequest, Car.class);
         carRepository.save(car);
 
-         InstanceInfo instanceInfo = eurekaClient.getApplication("log-service").getInstances().get(0);
 
-         String baseUrl = instanceInfo.getHomePageUrl(); // http://localhost:8083
+
+
+        InstanceInfo instanceInfo = eurekaClient.getApplication("log-service").getInstances().get(0);
+
+        String baseUrl = instanceInfo.getHomePageUrl(); // http://localhost:8083
         String  path = "/log";
         String servicePath = baseUrl+path;   // http://localhost:8083/log
 
@@ -52,6 +62,11 @@ public class CarService {
             throw  new ResourceNotFoundException("Log not created");
         }
     }
+
+
+
+
+
     //Not: getAllCars() *********************************************************************
     public List<CarDTO> getAllCars() {
 
