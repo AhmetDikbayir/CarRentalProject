@@ -8,6 +8,7 @@ import com.tpe.payload.mappers.UserMapper;
 import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.payload.messages.SuccessMessages;
 import com.tpe.payload.request.SigninRequest;
+import com.tpe.payload.request.UserRequestForCreateOrUpdate;
 import com.tpe.payload.request.UserRequestForRegister;
 import com.tpe.payload.response.SigninResponse;
 import com.tpe.payload.response.UserResponse;
@@ -149,7 +150,7 @@ public class UserService {
         return ResponseEntity.ok(userMapper.mapUserToUserResponse(user));
     }
 
-    public ResponseEntity<UserResponse> deleteUserById(Long userId) {
+    public ResponseEntity<UserResponse> deleteUserById(Long userId) throws BadRequestException {
         User user = methodHelper.isUserExist(userId);
 
         methodHelper.checkBuiltIn(user);
@@ -166,7 +167,7 @@ public class UserService {
     }
 
 
-    public ResponseEntity<UserResponse> createUser(UserRequestForCreateOrUpdate userRequestForCreateOrUpdate, HttpServletRequest httpServletRequest, String userRole) {
+    public ResponseEntity<UserResponse> createUser(UserRequestForCreateOrUpdate userRequestForCreateOrUpdate, HttpServletRequest httpServletRequest, String userRole) throws BadRequestException {
 
         String email = (String) httpServletRequest.getAttribute("username");
 
@@ -200,11 +201,8 @@ public class UserService {
     private void setRoleForNewUser(User foundUser, User userToCreate, String userRole) throws BadRequestException {
         if (foundUser.getRoles().contains(userRoleService.getUserRole(RoleType.ADMIN))) {
             switch (userRole.toLowerCase()) {
-                case "member":
-                    userToCreate.getRoles().add(userRoleService.getUserRole(RoleType.MEMBER));
-                    break;
-                case "employee":
-                    userToCreate.getRoles().add(userRoleService.getUserRole(RoleType.EMPLOYEE));
+                case "customer":
+                    userToCreate.getRoles().add(userRoleService.getUserRole(RoleType.CUSTOMER));
                     break;
                 case "admin":
                     userToCreate.getRoles().add(userRoleService.getUserRole(RoleType.ADMIN));
@@ -212,16 +210,19 @@ public class UserService {
                 default:
                     throw new ResourceNotFoundException((ErrorMessages.ROLE_NOT_FOUND));
             }
-        } else if (foundUser.getRoles().contains(userRoleService.getUserRole(RoleType.EMPLOYEE))) {
+        } else if (foundUser.getRoles().contains(userRoleService.getUserRole(RoleType.CUSTOMER))) {
             if (userRole.equalsIgnoreCase("Member")) {
-                userToCreate.getRoles().add(userRoleService.getUserRole(RoleType.MEMBER));
+                userToCreate.getRoles().add(userRoleService.getUserRole(RoleType.CUSTOMER));
             } else {
                 throw new BadRequestException(ErrorMessages.DONT_HAVE_AUTHORITY);
             }
         }
     }
 
-    public ResponseEntity<UserResponse> updateUser(UserRequestForCreateOrUpdate userRequestForCreateOrUpdate, Long userId, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<UserResponse> updateUser(
+            UserRequestForCreateOrUpdate userRequestForCreateOrUpdate,
+            Long userId,
+            HttpServletRequest httpServletRequest) throws BadRequestException {
         String email = (String) httpServletRequest.getAttribute("username");
         // işlemi yapan user
         User foundUser = userRepository.findByEmail(email);
@@ -255,10 +256,10 @@ public class UserService {
             if (userToUpdate.getBuiltIn()) {
                 throw new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
             }
-        } else if (foundUser.getRoles().contains(userRoleService.getUserRole(RoleType.EMPLOYEE))) {
-            if (userToUpdate.getRoles().contains(userRoleService.getUserRole(RoleType.EMPLOYEE)) ||
+        } else if (foundUser.getRoles().contains(userRoleService.getUserRole(RoleType.CUSTOMER))) {
+            if (userToUpdate.getRoles().contains(userRoleService.getUserRole(RoleType.CUSTOMER)) ||
                     userToUpdate.getRoles().contains(userRoleService.getUserRole(RoleType.ADMIN))) {
-                throw new BadRequestException("Employee can only update member users.");
+                throw new BadRequestException("Customer can only update own information.");
             }
         } else {
             throw new BadRequestException("You do not have permission to update this user.");
