@@ -1,16 +1,10 @@
 package com.tpe.service.helper;
 
-import com.dev02.libraryproject.entity.concretes.business.*;
-
-import com.dev02.libraryproject.entity.concretes.user.User;
-import com.dev02.libraryproject.entity.enums.RoleType;
-import com.dev02.libraryproject.exception.BadRequestException;
-import com.dev02.libraryproject.exception.ResourceNotFoundException;
-import com.dev02.libraryproject.payload.messages.ErrorMessages;
-
-import com.dev02.libraryproject.repository.business.*;
-import com.dev02.libraryproject.repository.user.UserRepository;
-
+import com.tpe.domain.User;
+import com.tpe.domain.enums.RoleType;
+import com.tpe.exception.BadRequestException;
+import com.tpe.exception.ResourceNotFoundException;
+import com.tpe.payload.messages.ErrorMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,24 +39,7 @@ public class MethodHelper {
     }
 
 
-    public Author isAuthorExistsById(Long id){
-        return  authorRepository.findById(id).orElseThrow(()->
-                new ResourceNotFoundException(String.format(ErrorMessages.AUTHOR_NOT_FOUND, id)));
-    }
-
-    public Category isCategoryExists(Long categoryId) {
-        return  categoryRepository.findById(categoryId).orElseThrow(()->
-                new ResourceNotFoundException(String.format(ErrorMessages.CATEGORY_NOT_FOUND, categoryId)));
-    }
-
-    public Publisher isPublisherExists(Long publisherId) {
-        return publisherRepository.findById(publisherId).orElseThrow(()->
-                new ResourceNotFoundException(String.format(ErrorMessages.PUBLISHER_NOT_FOUND, publisherId)));
-
-    }
-
-
-    public void checkBuiltIn(User user) {
+    public void checkBuiltIn(User user) throws BadRequestException {
         if (Boolean.TRUE.equals(user.getBuiltIn())) {
             throw new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
         }
@@ -86,22 +63,10 @@ public class MethodHelper {
                     String.format(ErrorMessages.ROLE_NOT_FOUND, user.getId(),roleType));
         }
     }
-    public Book isBookExists(Long id) {
-        return bookRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(String.format(ErrorMessages.BOOK_NOT_FOUND_MESSAGE, id)));
-
-    }
-
+    /*
     public List<Loan> getAllLoans(){
 
         return loanRepository.findAll();
-
-    }
-
-    public List<Book> getAllBooks(){
-
-        return bookRepository.findAll();
-
-    }
+    }*/
 
 }

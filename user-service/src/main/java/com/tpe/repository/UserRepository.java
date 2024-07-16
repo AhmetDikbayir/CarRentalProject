@@ -1,8 +1,8 @@
 package com.tpe.repository;
 
 
-import com.dev02.libraryproject.entity.concretes.user.User;
-import com.dev02.libraryproject.entity.enums.RoleType;
+import com.tpe.domain.User;
+import com.tpe.domain.enums.RoleType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;

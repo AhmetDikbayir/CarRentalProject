@@ -2,12 +2,16 @@ package com.tpe.service;
 
 import com.tpe.domain.User;
 import com.tpe.domain.enums.RoleType;
+import com.tpe.exception.BadRequestException;
+import com.tpe.exception.ResourceNotFoundException;
 import com.tpe.payload.mappers.UserMapper;
+import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.payload.messages.SuccessMessages;
 import com.tpe.payload.request.SigninRequest;
 import com.tpe.payload.request.UserRequestForRegister;
 import com.tpe.payload.response.SigninResponse;
 import com.tpe.payload.response.UserResponse;
+import com.tpe.repository.UserRepository;
 import com.tpe.repository.UserRoleRepository;
 import com.tpe.service.helper.MethodHelper;
 import com.tpe.service.helper.PageableHelper;
@@ -37,7 +41,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class UserService {
-    private final UserService userRepository;
+    private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
     public final JwtUtils jwtUtils;
     public final AuthenticationManager authenticationManager;
@@ -101,7 +105,6 @@ public class UserService {
 
         user.setCreateDate(LocalDateTime.now()); // Automatically set on create
 
-        user.setScore(0);
         User savedUser = userRepository.save(user);
 
         return ResponseEntity.ok(userMapper.mapUserToUserResponse(savedUser));
@@ -109,19 +112,18 @@ public class UserService {
     }
 
 
-    public ResponseMessage<UserResponse> getAuthenticatedUser(HttpServletRequest httpServletRequest) {
+
+    public ResponseEntity<UserResponse> getAuthenticatedUser(HttpServletRequest httpServletRequest) {
 
         String email = (String) httpServletRequest.getAttribute("username");
 
         User foundUser = userRepository.findByEmail(email);
 
-        return ResponseMessage.<UserResponse>builder().message(SuccessMessages.USER_FOUND)
-                .httpStatus(HttpStatus.OK)
-                .object(userMapper.mapUserToUserResponse(foundUser)).build();
+        return ResponseEntity.ok(userMapper.mapUserToUserResponse(foundUser));
 
     }
 
-    public ResponseEntity<Page<LoanResponse>> getAllLoansByUserByPage(HttpServletRequest httpServletRequest,
+    /*public ResponseEntity<Page<LoanResponse>> getAllLoansByUserByPage(HttpServletRequest httpServletRequest,
                                                                       int page, int size,
                                                                       String sort, String type) {
 
@@ -131,16 +133,11 @@ public class UserService {
 
         return loanService.getAllLoansByUserIdByPage(foundUser.getId(), page, size, sort, type);
 
-    }
+    }*/
 
-    public ResponseMessage<Page<UserResponse>> getAllUsersByPage(int page, int size, String sort, String type) {
+    public ResponseEntity<Page<UserResponse>> getAllUsersByPage(int page, int size, String sort, String type) {
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
-
-
-        return ResponseMessage.<Page<UserResponse>>builder().message(SuccessMessages.SUCCESS)
-                .httpStatus(HttpStatus.OK)
-                .object(userRepository.findAll(pageable).map(userMapper::mapUserToUserResponse))
-                .build();
+        return ResponseEntity.ok(userRepository.findAll(pageable).map(userMapper::mapUserToUserResponse));
 
     }
 
@@ -150,7 +147,6 @@ public class UserService {
         User user = methodHelper.isUserExist(userId);
 
         return ResponseEntity.ok(userMapper.mapUserToUserResponse(user));
-
     }
 
     public ResponseEntity<UserResponse> deleteUserById(Long userId) {
@@ -201,7 +197,7 @@ public class UserService {
     }
 
     //create user methodunda role bilgisi setlemek için yazıldı, yardımcı
-    private void setRoleForNewUser(User foundUser, User userToCreate, String userRole) {
+    private void setRoleForNewUser(User foundUser, User userToCreate, String userRole) throws BadRequestException {
         if (foundUser.getRoles().contains(userRoleService.getUserRole(RoleType.ADMIN))) {
             switch (userRole.toLowerCase()) {
                 case "member":
@@ -252,7 +248,7 @@ public class UserService {
     }
 
     //updateUser için yazıldı controller bağlantısı yok , yardımcı
-    private void checkUpdatePermission(User foundUser, User userToUpdate) {
+    private void checkUpdatePermission(User foundUser, User userToUpdate) throws BadRequestException {
         methodHelper.checkBuiltIn(userToUpdate);
 
         if (foundUser.getRoles().contains(userRoleService.getUserRole(RoleType.ADMIN))) {
