@@ -5,12 +5,12 @@ import com.tpe.payload.request.UserRequestForCreateOrUpdate;
 import com.tpe.payload.request.UserRequestForRegister;
 import com.tpe.payload.response.SigninResponse;
 import com.tpe.payload.response.UserResponse;
-import com.tpe.service.user.UserService;
+import com.tpe.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,14 +37,14 @@ public class UserController {
 
     // http://localhost:8097/users + POST
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN','EMPLOYEE','MEMBER')")
-    public ResponseMessage<UserResponse> getAuthenticatedUser(HttpServletRequest httpServletRequest) {
+    //@PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
+    public ResponseEntity<UserResponse> getAuthenticatedUser(HttpServletRequest httpServletRequest) {
         return userService.getAuthenticatedUser(httpServletRequest);
     }
 
     // http://localhost:8097/users/loans + POST
-    @PostMapping("/loans")
-    @PreAuthorize("hasAnyAuthority('ADMIN','EMPLOYEE','MEMBER')")
+   /* @PostMapping("/loans")
+    @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
     public ResponseEntity<Page<LoanResponse>> getAllLoansByUserByPage(
             HttpServletRequest httpServletRequest,
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -54,11 +54,11 @@ public class UserController {
 
         return userService.getAllLoansByUserByPage(httpServletRequest, page, size, sort, type);
     }
-
+*/
     // http://localhost:8097/users + Get
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN','EMPLOYEE')")
-    public ResponseMessage<Page<UserResponse>> getAllUsers(
+    //@PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
+    public ResponseEntity<Page<UserResponse>> getAllUsers(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "20") int size,
             @RequestParam(value = "sort", defaultValue = "createDate") String sort,
@@ -69,21 +69,21 @@ public class UserController {
 
     // http://localhost:8097/users/{userId} + GET
     @GetMapping("/{userId}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','EMPLOYEE')")
+    //@PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long userId) {
         return userService.getUserById(userId);
     }
 
     // http://localhost:8097/users/{userId} + DELETE
     @DeleteMapping("/{userId}")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    //@PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<UserResponse> deleteUserById(@PathVariable Long userId) {
         return userService.deleteUserById(userId);
     }
 
     // http://localhost:8097/users/{userRole} + POST
     @PostMapping("/{userRole}") //Dökümantasyona göre kıyasla
-    @PreAuthorize("hasAnyAuthority('ADMIN','EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
     public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserRequestForCreateOrUpdate userRequestForCreateOrUpdate,
                                                    HttpServletRequest httpServletRequest,
                                                    @PathVariable String userRole) {
@@ -92,7 +92,7 @@ public class UserController {
 
     // http://localhost:8097/users/{userId} + PUT
     @PutMapping("/{userId}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
     public ResponseEntity<UserResponse> updateUser(@RequestBody @Valid UserRequestForCreateOrUpdate userRequestForCreateOrUpdate, //farklı dto düşünülebilir create-->update
                                                    @PathVariable Long userId,
                                                    HttpServletRequest httpServletRequest) {
