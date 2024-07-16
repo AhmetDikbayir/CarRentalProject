@@ -7,8 +7,10 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +25,7 @@ public class CarController {
 
     //Not: saveCar() *********************************************************************
     @PostMapping // http://localhost:8085/car   + POST
-    public ResponseEntity<Map<String, String>> saveCar(@RequestBody CarRequest carRequest) {
+    public ResponseEntity<Map<String, String>> saveCar(@RequestBody @Valid CarRequest carRequest) {
 
         carService.saveCar(carRequest);
 
