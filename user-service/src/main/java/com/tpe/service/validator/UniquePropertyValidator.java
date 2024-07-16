@@ -1,10 +1,12 @@
 package com.tpe.service.validator;
 
-import com.dev02.libraryproject.entity.concretes.user.User;
-import com.dev02.libraryproject.exception.ConflictException;
-import com.dev02.libraryproject.payload.messages.ErrorMessages;
-import com.dev02.libraryproject.payload.request.user.UserRequestForCreateOrUpdate;
-import com.dev02.libraryproject.repository.user.UserRepository;
+
+
+import com.tpe.domain.User;
+import com.tpe.exception.ConflictException;
+import com.tpe.payload.messages.ErrorMessages;
+import com.tpe.payload.request.UserRequestForCreateOrUpdate;
+import com.tpe.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +16,7 @@ public class UniquePropertyValidator {
 
     private final UserRepository userRepository;
 
-    public void checkDuplicate(String email, String phone){
+    public void checkDuplicate(String email, String phone) throws ConflictException {
 
 
         if(userRepository.existsByEmail(email)){

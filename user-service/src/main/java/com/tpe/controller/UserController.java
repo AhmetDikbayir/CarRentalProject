@@ -83,7 +83,7 @@ public class UserController {
 
     // http://localhost:8097/users/{userRole} + POST
     @PostMapping("/{userRole}") //Dökümantasyona göre kıyasla
-    @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
+    //@PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
     public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserRequestForCreateOrUpdate userRequestForCreateOrUpdate,
                                                    HttpServletRequest httpServletRequest,
                                                    @PathVariable String userRole) {
@@ -92,7 +92,7 @@ public class UserController {
 
     // http://localhost:8097/users/{userId} + PUT
     @PutMapping("/{userId}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
+    //@PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
     public ResponseEntity<UserResponse> updateUser(@RequestBody @Valid UserRequestForCreateOrUpdate userRequestForCreateOrUpdate, //farklı dto düşünülebilir create-->update
                                                    @PathVariable Long userId,
                                                    HttpServletRequest httpServletRequest) {
