@@ -4,6 +4,7 @@ import com.tpe.domain.User;
 import com.tpe.payload.request.UserRequest;
 import com.tpe.payload.request.UserRequestForCreateOrUpdate;
 import com.tpe.payload.request.UserRequestForRegister;
+import com.tpe.payload.request.UserRequestForUpdatePassword;
 import com.tpe.payload.response.UserResponse;
 import org.springframework.stereotype.Component;
 
@@ -64,5 +65,12 @@ public class UserMapper {
                 .builtIn(userRequestForCreateOrUpdate.getBuiltIn())
                 .build();
 
+    }
+
+    public User mapUserRequestToUserUpdatedPassword(UserRequestForUpdatePassword userRequestForUpdatePassword, Long userId) {
+        return User.builder()
+                .id(userId)
+                .password(userRequestForUpdatePassword.getPassword())
+                .build();
     }
 }
