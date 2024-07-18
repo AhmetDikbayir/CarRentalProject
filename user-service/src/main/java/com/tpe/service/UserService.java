@@ -10,6 +10,7 @@ import com.tpe.payload.messages.SuccessMessages;
 import com.tpe.payload.request.SigninRequest;
 import com.tpe.payload.request.UserRequestForCreateOrUpdate;
 import com.tpe.payload.request.UserRequestForRegister;
+import com.tpe.payload.request.UserRequestForUpdatePassword;
 import com.tpe.payload.response.SigninResponse;
 import com.tpe.payload.response.UserResponse;
 import com.tpe.repository.UserRepository;
@@ -20,7 +21,6 @@ import com.tpe.service.validator.UniquePropertyValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -86,7 +86,7 @@ public class UserService {
         return ResponseEntity.ok(signinResponse);
     }
 
-    public ResponseEntity<UserResponse> register(UserRequestForRegister userRequestForRegister) {
+    public ResponseEntity<UserResponse> register(UserRequestForRegister userRequestForRegister){
 
         //!!! username - ssn- phoneNumber unique mi kontrolu ??
         uniquePropertyValidator.checkDuplicate(userRequestForRegister.getEmail(),
@@ -150,15 +150,15 @@ public class UserService {
         return ResponseEntity.ok(userMapper.mapUserToUserResponse(user));
     }
 
-    public ResponseEntity<UserResponse> deleteUserById(Long userId) throws BadRequestException {
+    public ResponseEntity<UserResponse> deleteUserById(Long userId){
         User user = methodHelper.isUserExist(userId);
 
         methodHelper.checkBuiltIn(user);
 
-        if (!user.getLoanList().isEmpty()) {
+      /*  if (!user.getLoanList().isEmpty()) {
             throw new BadRequestException(ErrorMessages.USER_HAS_LOAN);
         }
-
+      */
         userRepository.delete(user);
 
         return ResponseEntity.ok(userMapper.mapUserToUserResponse(user));   //Aslında no content 204 kodu
@@ -167,7 +167,7 @@ public class UserService {
     }
 
 
-    public ResponseEntity<UserResponse> createUser(UserRequestForCreateOrUpdate userRequestForCreateOrUpdate, HttpServletRequest httpServletRequest, String userRole) throws BadRequestException {
+    public ResponseEntity<UserResponse> createUser(UserRequestForCreateOrUpdate userRequestForCreateOrUpdate, HttpServletRequest httpServletRequest, String userRole){
 
         String email = (String) httpServletRequest.getAttribute("username");
 
@@ -198,7 +198,7 @@ public class UserService {
     }
 
     //create user methodunda role bilgisi setlemek için yazıldı, yardımcı
-    private void setRoleForNewUser(User foundUser, User userToCreate, String userRole) throws BadRequestException {
+    private void setRoleForNewUser(User foundUser, User userToCreate, String userRole) {
         if (foundUser.getRoles().contains(userRoleService.getUserRole(RoleType.ADMIN))) {
             switch (userRole.toLowerCase()) {
                 case "customer":
@@ -222,7 +222,7 @@ public class UserService {
     public ResponseEntity<UserResponse> updateUser(
             UserRequestForCreateOrUpdate userRequestForCreateOrUpdate,
             Long userId,
-            HttpServletRequest httpServletRequest) throws BadRequestException {
+            HttpServletRequest httpServletRequest){
         String email = (String) httpServletRequest.getAttribute("username");
         // işlemi yapan user
         User foundUser = userRepository.findByEmail(email);
@@ -249,7 +249,7 @@ public class UserService {
     }
 
     //updateUser için yazıldı controller bağlantısı yok , yardımcı
-    private void checkUpdatePermission(User foundUser, User userToUpdate) throws BadRequestException {
+    private void checkUpdatePermission(User foundUser, User userToUpdate) {
         methodHelper.checkBuiltIn(userToUpdate);
 
         if (foundUser.getRoles().contains(userRoleService.getUserRole(RoleType.ADMIN))) {
@@ -309,5 +309,28 @@ public class UserService {
 
     public long countMembers(RoleType roleType) {
         return userRepository.countByRoleType(roleType.getName());
+    }
+
+    public ResponseEntity<UserResponse> updateUserPassword(UserRequestForUpdatePassword userRequestForUpdatePassword, Long userId, HttpServletRequest httpServletRequest) {
+
+        String email = (String) httpServletRequest.getAttribute("username");
+        // işlemi yapan user
+        User foundUser = userRepository.findByEmail(email);
+
+        // güncellenecek user
+        User userToUpdate = methodHelper.isUserExist(userId);
+
+        // Role based update permission ve built-in kontrolü
+        checkUpdatePermission(foundUser, userToUpdate);
+
+        User updatedUser = userMapper.mapUserRequestToUserUpdatedPassword(userRequestForUpdatePassword, userId);
+
+        updatedUser.setPassword(passwordEncoder.encode(userRequestForUpdatePassword.getPassword()));
+
+        User savedUser = userRepository.save(updatedUser);
+
+        return ResponseEntity.ok(userMapper.mapUserToUserResponse(savedUser));
+        //todo şifreniz güncellendi mesajı ile döndürülecek...
+
     }
 }

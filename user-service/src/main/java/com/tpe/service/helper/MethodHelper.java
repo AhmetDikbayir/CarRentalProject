@@ -5,6 +5,7 @@ import com.tpe.domain.enums.RoleType;
 import com.tpe.exception.BadRequestException;
 import com.tpe.exception.ResourceNotFoundException;
 import com.tpe.payload.messages.ErrorMessages;
+import com.tpe.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MethodHelper {
     private final UserRepository userRepository;
-    private final AuthorRepository authorRepository;
-    private final CategoryRepository categoryRepository;
-    private final PublisherRepository publisherRepository;
-    private final BookRepository bookRepository;
-    private final LoanRepository loanRepository;
+    //private final LoanRepository loanRepository;
 
 
     @Transactional
@@ -39,7 +36,7 @@ public class MethodHelper {
     }
 
 
-    public void checkBuiltIn(User user) throws BadRequestException {
+    public void checkBuiltIn(User user) {
         if (Boolean.TRUE.equals(user.getBuiltIn())) {
             throw new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
         }

@@ -1,12 +1,11 @@
 package com.tpe.service;
 
-import com.dev02.libraryproject.entity.concretes.user.Role;
-import com.dev02.libraryproject.entity.enums.RoleType;
-import com.dev02.libraryproject.exception.ResourceNotFoundException;
-import com.dev02.libraryproject.payload.messages.ErrorMessages;
-import com.dev02.libraryproject.repository.user.UserRoleRepository;
+
 import com.tpe.domain.Role;
 import com.tpe.domain.enums.RoleType;
+import com.tpe.exception.ResourceNotFoundException;
+import com.tpe.payload.messages.ErrorMessages;
+import com.tpe.repository.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,8 +1,11 @@
 package com.tpe.controller;
 
+import com.tpe.exception.BadRequestException;
+import com.tpe.exception.ConflictException;
 import com.tpe.payload.request.SigninRequest;
 import com.tpe.payload.request.UserRequestForCreateOrUpdate;
 import com.tpe.payload.request.UserRequestForRegister;
+import com.tpe.payload.request.UserRequestForUpdatePassword;
 import com.tpe.payload.response.SigninResponse;
 import com.tpe.payload.response.UserResponse;
 import com.tpe.service.UserService;
@@ -101,5 +104,15 @@ public class UserController {
 
     }
 
+    // http://localhost:8097/users/{userIdForPassword} + PUT
+    @PutMapping("/{userIdForPassword}")
+    //@PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
+    public ResponseEntity<UserResponse> updateUserPassword(@RequestBody @Valid UserRequestForUpdatePassword userRequestForUpdatePassword,
+                                                           @PathVariable Long userId,
+                                                           HttpServletRequest httpServletRequest) {
+
+        return userService.updateUserPassword(userRequestForUpdatePassword, userId, httpServletRequest);
+        //todo şifreniz güncellendi mesajı ile döndürülecek...
+    }
 
 }
