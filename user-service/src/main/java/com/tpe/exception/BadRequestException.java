@@ -1,7 +1,8 @@
 package com.tpe.exception;
 
-public class BadRequestException extends Throwable {
+public class BadRequestException extends RuntimeException {
     public BadRequestException(String message) {
+
         super(message);
     }
 }

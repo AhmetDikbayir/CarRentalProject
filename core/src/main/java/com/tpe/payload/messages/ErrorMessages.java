@@ -4,6 +4,8 @@ package com.tpe.payload.messages;
 public class ErrorMessages {
 
 
+    public static final String RESERVATION_DOES_NOT_EXISTS_BY_ID = "Reservation not found";
+
     private ErrorMessages() {
     }
 

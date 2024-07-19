@@ -38,9 +38,11 @@ public class Reservation {
     private Double pricePerHour;
 
     @Column(nullable = false)
-    private Long userId;
+    @ManyToOne
+    private User user;
 
     @Column(nullable = false)
-    private Long carId;
+    @OneToOne
+    private Car car;
 
 }

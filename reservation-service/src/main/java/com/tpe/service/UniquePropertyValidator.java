@@ -15,26 +15,6 @@ public class UniquePropertyValidator {
     private final ReservationRepository carRepository;
     private final ReservationService carService;
 
-    public void checkDuplicate(String numberPlate) {
-        if (carRepository.existsByNumberPlate(numberPlate)) {
-            throw new ConflictException(String.format(ErrorMessages.CAR_EXISTS_BY_THIS_NUMBERPLATE, numberPlate));
-        }
+    public void checkReservationStatus() {
     }
-
-    public void checkUniqueProperties(Reservation car, ReservationRequest carRequest) {
-        String updatedNumberPlate = "";
-
-        boolean isChanced = false;
-        if (!car.getNumberPlate().equalsIgnoreCase(carRequest.getNumberPlate())) {
-            updatedNumberPlate = carRequest.getNumberPlate();
-            isChanced = true;
-        }
-
-        if (isChanced) {
-            checkDuplicate(updatedNumberPlate);
-        }
-
-
-    }
-
 }
