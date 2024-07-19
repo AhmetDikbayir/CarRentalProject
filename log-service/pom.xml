@@ -45,7 +45,7 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+    
 		<dependency>
 			<groupId>com.tpe</groupId>
 			<artifactId>core</artifactId>
