@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CarDTO {
+public class CarResponse {
 
     private Long id;
 

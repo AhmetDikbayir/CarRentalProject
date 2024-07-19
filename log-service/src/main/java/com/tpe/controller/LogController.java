@@ -33,6 +33,4 @@ public class LogController {
 
         return new ResponseEntity<>(appLog.getId(), HttpStatus.CREATED);//200
     }
-
-
 }
