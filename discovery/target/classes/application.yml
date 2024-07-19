@@ -1,11 +1,11 @@
 server:
-  port: 8097 # bu applicationin port numarasini yazdik
+  port: 8097 # Bu port Euroka server portu
 
 eureka:
   instance:
     hostname: localhost
   client:
-    registerWithEureka: false  # kendisi eureka oldugu icin bir yere kaydolmayacak o yuzden 2 yere false yazildi
-    fetchRegistry: false #  Eureka sunucusunda kay?tl? olan di?er servisleri bilgilerini yerel olarak saklayacak ve bunlar? kullanarak servisleri dinamik olarak bulabilecektir.
+    registerWithEureka: false  # kendisi eureka oldugu için tekrardan Euroka'ya kayıt yapmıyoruz
+    fetchRegistry: false #  Eureka sunucusunda kayıtlı olan di?er servisleri bilgilerini yerel olarak saklayacak
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
