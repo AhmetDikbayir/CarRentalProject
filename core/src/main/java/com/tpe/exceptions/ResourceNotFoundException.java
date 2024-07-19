@@ -1,4 +1,4 @@
-package com.tpe.exception;
+package com.tpe.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
