@@ -6,15 +6,8 @@ public class ErrorMessages {
 
     private ErrorMessages() {
   }
-
     public static final String USER_NOT_ADMIN = "User is not Admin";
-
-  public static final String NOT_PERMITTED_METHOD_MESSAGE="You don't have any authority for this...";
-
-
-
-
-
+    public static final String NOT_PERMITTED_METHOD_MESSAGE="You don't have any authority for this...";
 
     public static final String ROLE_NOT_FOUND = "Role doesn't exist";
 
@@ -31,8 +24,7 @@ public class ErrorMessages {
 
     public static final String DONT_HAVE_AUTHORITY="You don't have permission to do that";
 
-
-  public static final String CUSTOMER_CAN_ONLY_UPDATE_OWN_MESSAGE = "Customer can only update own information.";
+    public static final String CUSTOMER_CAN_ONLY_UPDATE_OWN_MESSAGE = "Customer can only update own information.";
 
 
 

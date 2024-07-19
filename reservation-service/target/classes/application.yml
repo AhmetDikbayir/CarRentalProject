@@ -1,9 +1,9 @@
 server:
-  port: 8096
+  port: 8082
 
 spring:
   application:
-    name: user-service
+    name: car-service
 
   config:
     import: optional:configserver:http://localhost:8090

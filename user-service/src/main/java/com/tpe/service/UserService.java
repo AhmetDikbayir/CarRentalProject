@@ -7,10 +7,7 @@ import com.tpe.exception.ResourceNotFoundException;
 import com.tpe.payload.mappers.UserMapper;
 import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.payload.messages.SuccessMessages;
-import com.tpe.payload.request.SigninRequest;
-import com.tpe.payload.request.UserRequestForCreateOrUpdate;
-import com.tpe.payload.request.UserRequestForRegister;
-import com.tpe.payload.request.UserRequestForUpdatePassword;
+import com.tpe.payload.request.*;
 import com.tpe.payload.response.SigninResponse;
 import com.tpe.payload.response.UserResponse;
 import com.tpe.repository.UserRepository;
@@ -22,11 +19,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+/*
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+*/
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,8 +43,8 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
-    public final JwtUtils jwtUtils;
-    public final AuthenticationManager authenticationManager;
+  //  public final JwtUtils jwtUtils;
+  //  public final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final UniquePropertyValidator uniquePropertyValidator;
     private final UserMapper userMapper;
@@ -53,7 +52,7 @@ public class UserService {
     private final UserRoleService userRoleService;
     private final MethodHelper methodHelper;
 
-
+/*
     public ResponseEntity<SigninResponse> authenticateUser(SigninRequest signInRequest) {
         String email = signInRequest.getEmail();
         String password = signInRequest.getPassword();
@@ -85,7 +84,7 @@ public class UserService {
         // SigninResponse nesnesi ResponseEntity ile donduruluyor
         return ResponseEntity.ok(signinResponse);
     }
-
+*/
     public ResponseEntity<UserResponse> register(UserRequestForRegister userRequestForRegister){
 
         //!!! username - ssn- phoneNumber unique mi kontrolu ??
@@ -276,8 +275,8 @@ public class UserService {
         return userRepository.countAdmin(RoleType.ADMIN);
     }
 
-    public ResponseMessage<UserResponse> saveUser(UserRequest adminRequest, String userRole) {
-
+    //todo : kontrol edilecek
+    public ResponseEntity<UserResponse> saveUser(UserRequest adminRequest, String userRole) {
         //!!! username - ssn- phoneNumber unique mi kontrolu ??
         uniquePropertyValidator.checkDuplicate(adminRequest.getPhone(), adminRequest.getEmail());
         //!!! DTO --> POJO
@@ -298,13 +297,10 @@ public class UserService {
 
         user.setCreateDate(LocalDateTime.now()); // Automatically set on create
 
-        user.setScore(2);
         User savedUser = userRepository.save(user);
 
-        return ResponseMessage.<UserResponse>builder()
-                .message(SuccessMessages.ADMIN_CREATE)
-                .object(userMapper.mapUserToUserResponse(savedUser))
-                .build();
+        return ResponseEntity.ok(userMapper.mapUserToUserResponse(savedUser))
+
     }
 
     public long countMembers(RoleType roleType) {
