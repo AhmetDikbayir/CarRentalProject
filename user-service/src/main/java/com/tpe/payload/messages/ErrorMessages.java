@@ -4,6 +4,7 @@ public class ErrorMessages {
 
 
 
+
     private ErrorMessages() {
   }
     public static final String USER_NOT_ADMIN = "User is not Admin";
@@ -26,6 +27,7 @@ public class ErrorMessages {
 
     public static final String CUSTOMER_CAN_ONLY_UPDATE_OWN_MESSAGE = "Customer can only update own information.";
 
+  public static final String RESERVATION_NOT_EMPTY = "Reservation is not empty...";
 
 
 

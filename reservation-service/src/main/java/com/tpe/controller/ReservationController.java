@@ -1,6 +1,5 @@
 package com.tpe.controller;
 
-import com.tpe.dto.ReservationResponse;
 import com.tpe.payload.request.ReservationRequest;
 import com.tpe.payload.response.ReservationResponse;
 import com.tpe.service.ReservationService;

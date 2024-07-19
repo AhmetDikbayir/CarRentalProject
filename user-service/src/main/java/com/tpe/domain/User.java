@@ -1,6 +1,7 @@
 package com.tpe.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -80,5 +81,9 @@ public class User {
     )
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Role> roles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Reservation> reservationList= new ArrayList<>();
 
 }

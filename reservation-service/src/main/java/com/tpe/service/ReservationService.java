@@ -30,7 +30,6 @@ public class ReservationService {
     @Autowired
     private ReservationRepository reservationRepository;
 
-    private final ReservationRepository reservationRepository;
     private final ModelMapper modelMapper;
     private final EurekaClient eurekaClient;
     private final RestTemplate restTemplate;
@@ -99,6 +98,8 @@ public class ReservationService {
         return ResponseEntity.ok(mapReservationToReservationDTO(updatedReservation));
     }
 
+
+
     //Not: getAllReservations() *********************************************************************
     public List<ReservationResponse> getAllReservations() {
 
@@ -111,7 +112,7 @@ public class ReservationService {
     }
 
     //Not: getById() ************************************************************************
-    public CarResponse getById(Long id) {
+    public ReservationResponse getById(Long id) {
 
         Reservation reservation = reservationRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, id)));
@@ -120,8 +121,8 @@ public class ReservationService {
         return reservationResponse;
     }
 
-    public boolean checkReservationStatus(Long carId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        List<Reservation> reservations = reservationRepository.findReservationsForCarInDateRange(carId, startDateTime, endDateTime);
+    public boolean checkReservationStatus(Long reservationId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        List<Reservation> reservations = reservationRepository.findReservationsForCarInDateRange(reservationId, startDateTime, endDateTime);
 
         if (reservations.isEmpty()) {
             return true; // car is available for reservation
@@ -129,6 +130,10 @@ public class ReservationService {
             throw new ResourceNotFoundException(ErrorMessages.RESERVATION_NOT_AVAILABLE);
         }
     }
+
+    private Reservation checkReservationStatus(Long reservationId) {
+    }
+
 
 
 }
