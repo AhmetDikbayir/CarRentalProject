@@ -11,13 +11,18 @@
         <module name="discovery" />
 
         <module name="log-service" />
+        
+        
         <module name="report-service" />
+
+      
 
         <module name="reservation-service" />
        
 
         <module name="car-service" />
         <module name="user-service" />
+
         <module name="config" />
         <module name="gateway" />
       </profile>
@@ -31,10 +36,12 @@
       <module name="gateway" options="-parameters" />
       <module name="log-service" options="-parameters" />
 
+
       <module name="report-service" options="-parameters" />
 
       <module name="reservation-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
+
 
     </option>
   </component>
