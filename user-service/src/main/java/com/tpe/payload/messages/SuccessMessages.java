@@ -3,6 +3,8 @@ package com.tpe.payload.messages;
 public class SuccessMessages {
 
 
+
+
     private SuccessMessages() {
     }
 
@@ -34,4 +36,5 @@ public class SuccessMessages {
   
     public static final String ADMIN_CREATE = "Built in Admin created" ;
 
+    public static final String PASSWORD_UPDATED = "Password is updated successfully";
 }

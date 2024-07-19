@@ -2,15 +2,14 @@ package com.tpe.payload.messages;
 
 public class ErrorMessages {
 
-  private ErrorMessages() {
+
+
+    private ErrorMessages() {
   }
 
-//7-15 author
-    public static final String AUTHOR_NOT_FOUND="Author is not found by id : %s.";
     public static final String USER_NOT_ADMIN = "User is not Admin";
 
   public static final String NOT_PERMITTED_METHOD_MESSAGE="You don't have any authority for this...";
-  public static final String CATEGORY_NOT_FOUND = "Category is not found with id %s";
 
 
 
@@ -19,10 +18,6 @@ public class ErrorMessages {
 
     public static final String ROLE_NOT_FOUND = "Role doesn't exist";
 
-    public static final String BOOK_NOT_FOUND_MESSAGE ="Book is not found by id : %s.";
-    public static final String BOOK_NOT_LOANABLE="Book is not loanable";
-    public static final String BOOK_ALREADY_EXISTS_WITH_NAME ="Book is already exists" ;
-    public static final String BOOK_CAN_NOT_BE_DELETED ="Book can not be deleted" ;
     public static final String ALREADY_REGISTER_MESSAGE_EMAIL= "Email is exists already : %s";
     public static final String ALREADY_REGISTER_MESSAGE_PHONE= "Email is exists already : %s";
 
@@ -36,24 +31,8 @@ public class ErrorMessages {
 
     public static final String DONT_HAVE_AUTHORITY="You don't have permission to do that";
 
-    public static final String PUBLISHER_NOT_FOUND = "Publisher is not found by id : %s";
-    public static final String CANT_DELETE_PUBLISHER = "Publisher can not deleted";
 
-    public static final String CATEGORY_ALREADY_EXISTS = "Category has already exists";
-    public static final String CATEGORY_CAN_NOT_DELETED = "Category can not deleted because category has book(s)";
-
-
-    public static final String EXRPIRED_BOOK_NOT_FOUND = "Expired book not found";
-    public static final String UNRETURNED_BOOK_NOT_FOUND = "Unreturned book not found";
-
-
-
-
-
-
-
-
-    //16-25 loan
+  public static final String CUSTOMER_CAN_ONLY_UPDATE_OWN_MESSAGE = "Customer can only update own information.";
 
 
 
