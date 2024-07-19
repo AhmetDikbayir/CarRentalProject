@@ -1,14 +1,14 @@
 package com.tpe.controller;
 
-import com.tpe.dto.CarDTO;
+import com.tpe.dto.CarResponse;
 import com.tpe.dto.CarRequest;
 import com.tpe.service.CarService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class CarController {
 
     //Not: saveCar() *********************************************************************
     @PostMapping // http://localhost:8085/car   + POST
-    public ResponseEntity<Map<String, String>> saveCar(@RequestBody CarRequest carRequest) {
+    public ResponseEntity<Map<String, String>> saveCar(@RequestBody @Valid CarRequest carRequest) {
 
         carService.saveCar(carRequest);
 
@@ -35,17 +35,30 @@ public class CarController {
 
     }
 
+    //Not: updateCar() *********************************************************************
+    @PutMapping("/updateCar") // http://localhost:8085/car   + POST
+    public ResponseEntity<CarResponse> updateCar(@RequestBody @Valid CarRequest carRequest, Long carId) {
+
+        return carService.updateCar(carRequest, carId);
+
+    }
+    //Not:delete car
+    //Not:upload image file
+    //Not:get all image file
+
     //Not: getAllCars() *********************************************************************
     @GetMapping
-    public ResponseEntity<List<CarDTO>> getAllCars(){
-        List<CarDTO> allCars = carService.getAllCars();
+    public ResponseEntity<List<CarResponse>> getAllCars(){
+        List<CarResponse> allCars = carService.getAllCars();
         return ResponseEntity.ok(allCars);
     }
 
     //Not: getById() ************************************************************************
     @GetMapping("/{id}")
-    public ResponseEntity<CarDTO> getCar(@PathVariable Long id) {
-       CarDTO carDTO = carService.getById(id);
-       return ResponseEntity.ok(carDTO);
+    public ResponseEntity<CarResponse> getCar(@PathVariable Long id) {
+       CarResponse carResponse = carService.getById(id);
+       return ResponseEntity.ok(carResponse);
     }
+
+
 }

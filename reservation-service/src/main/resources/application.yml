@@ -1,0 +1,9 @@
+server:
+  port: 8091
+
+spring:
+  application:
+    name: reservation-service
+
+  config:
+    import: optional:configserver:http://localhost:8090

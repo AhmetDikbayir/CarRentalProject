@@ -6,7 +6,7 @@
 
     <groupId>com.tpe</groupId>
     <artifactId>core</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.5-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -21,6 +21,14 @@
             <version>1.18.24</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>6.1.10</version>
+            <scope>compile</scope>
+        </dependency>
+
+
     </dependencies>
 
 </project>
