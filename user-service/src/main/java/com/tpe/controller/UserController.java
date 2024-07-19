@@ -26,11 +26,13 @@ public class UserController {
 
     private final UserService userService;
 
+    /*
     // http://localhost:8097/users/signin + POST
     @PostMapping("/signin")
     public ResponseEntity<SigninResponse> signIn(@RequestBody @Valid SigninRequest signInRequest) {
         return userService.authenticateUser(signInRequest);
     }
+    */
 
     // http://localhost:8097/users/register + POST
     @PostMapping("/register")

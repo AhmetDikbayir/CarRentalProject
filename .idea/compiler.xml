@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="core" />
         <module name="discovery" />
+        <module name="reservation-service" />
         <module name="log-service" />
         <module name="car-service" />
         <module name="user-service" />
@@ -24,6 +25,7 @@
       <module name="discovery" options="-parameters" />
       <module name="gateway" options="-parameters" />
       <module name="log-service" options="-parameters" />
+      <module name="reservation-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>
   </component>
