@@ -142,7 +142,7 @@ public class UserService {
 
     }
 
-    @Transactional
+    @Transactional      //todo sorulacak
     public ResponseEntity<UserResponse> getUserById(Long userId) {
 
         User user = methodHelper.isUserExist(userId);
@@ -259,10 +259,10 @@ public class UserService {
         } else if (foundUser.getRoles().contains(userRoleService.getUserRole(RoleType.CUSTOMER))) {
             if (userToUpdate.getRoles().contains(userRoleService.getUserRole(RoleType.CUSTOMER)) ||
                     userToUpdate.getRoles().contains(userRoleService.getUserRole(RoleType.ADMIN))) {
-                throw new BadRequestException("Customer can only update own information.");
+                throw new BadRequestException(ErrorMessages.CUSTOMER_CAN_ONLY_UPDATE_OWN_MESSAGE);
             }
         } else {
-            throw new BadRequestException("You do not have permission to update this user.");
+            throw new BadRequestException(ErrorMessages.NOT_PERMITTED_METHOD_MESSAGE);
         }
     }
 
@@ -311,7 +311,7 @@ public class UserService {
         return userRepository.countByRoleType(roleType.getName());
     }
 
-    public ResponseEntity<UserResponse> updateUserPassword(UserRequestForUpdatePassword userRequestForUpdatePassword, Long userId, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<String> updateUserPassword(UserRequestForUpdatePassword userRequestForUpdatePassword, Long userId, HttpServletRequest httpServletRequest) {
 
         String email = (String) httpServletRequest.getAttribute("username");
         // işlemi yapan user
@@ -329,8 +329,8 @@ public class UserService {
 
         User savedUser = userRepository.save(updatedUser);
 
-        return ResponseEntity.ok(userMapper.mapUserToUserResponse(savedUser));
-        //todo şifreniz güncellendi mesajı ile döndürülecek...
+        return ResponseEntity.ok(SuccessMessages.PASSWORD_UPDATED);
+
 
     }
 }
