@@ -120,12 +120,52 @@ public class CarService {
         return carResponse;
     }
 
+
+    // HELPER METHOD ****************************************************************************
     public Car isCarExistsById(Long carId) {
 
         return carRepository.findById(carId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ErrorMessages.CAR_DOES_NOT_EXISTS_BY_ID, carId)));
 
     }
+
+
+
+    //Not: deleteById() ************************************************************************
+    public ResponseEntity<CarResponse> deleteCar(Long carId) {
+    Car foundCar=isCarExistsById(carId);
+
+    if (!foundCar.isAvailable()){
+        throw new ConflictException(ErrorMessages.CAR_CANNOT_DELETED);
+    }
+    carRepository.deleteById(carId);
+
+
+        InstanceInfo instanceInfo = eurekaClient.getApplication("log-service").getInstances().get(0);
+
+        String baseUrl = instanceInfo.getHomePageUrl(); // http://localhost:8083
+        String path = "/log";
+        String servicePath = baseUrl + path;   // http://localhost:8083/log
+
+        AppLogRequest appLogDTO = new AppLogRequest();
+        appLogDTO.setLevel(AppLogLevel.INFO.name());
+        appLogDTO.setDescription("Save a Car: " + foundCar.getId());
+        appLogDTO.setTime(LocalDateTime.now());
+
+        ResponseEntity<String> logResponse = restTemplate.postForEntity(servicePath, appLogDTO, String.class);
+
+        if (!(logResponse.getStatusCode() == HttpStatus.CREATED)) {
+            throw new ResourceNotFoundException("Log not created");
+        }
+
+        CarResponse carResponse=mapCarToCarDTO(foundCar);
+        return new ResponseEntity<>(carResponse, HttpStatus.OK);
+    }
+
+
+
+
+
 
 
 }
