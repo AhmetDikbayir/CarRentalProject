@@ -52,12 +52,12 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!--	<dependency>
+			<dependency>
                 <groupId>com.tpe</groupId>
                 <artifactId>core</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>0.0.5-SNAPSHOT</version>
             </dependency>
-    -->
+
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
@@ -70,7 +70,19 @@
                 <version>1.19.4</version>
                 <scope>compile</scope>
             </dependency>
-        </dependencies>
+        <dependency>
+            <groupId>com.tpe</groupId>
+            <artifactId>reservation-service</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+		<dependency>
+			<groupId>com.tpe</groupId>
+			<artifactId>reservation-service</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
 
         <dependencyManagement>
             <dependencies>

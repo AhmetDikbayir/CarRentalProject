@@ -158,6 +158,9 @@ public class UserService {
             throw new BadRequestException(ErrorMessages.USER_HAS_LOAN);
         }
       */
+        if (!user.getReservationList().isEmpty()) {
+            throw new BadRequestException(ErrorMessages.RESERVATION_NOT_EMPTY);
+        }
         userRepository.delete(user);
 
         return ResponseEntity.ok(userMapper.mapUserToUserResponse(user));   //Aslında no content 204 kodu
@@ -210,7 +213,7 @@ public class UserService {
                     throw new ResourceNotFoundException((ErrorMessages.ROLE_NOT_FOUND));
             }
         } else if (foundUser.getRoles().contains(userRoleService.getUserRole(RoleType.CUSTOMER))) {
-            if (userRole.equalsIgnoreCase("Member")) {
+            if (userRole.equalsIgnoreCase("Customer")) {
                 userToCreate.getRoles().add(userRoleService.getUserRole(RoleType.CUSTOMER));
             } else {
                 throw new BadRequestException(ErrorMessages.DONT_HAVE_AUTHORITY);
@@ -247,7 +250,7 @@ public class UserService {
 
     }
 
-    //updateUser için yazıldı controller bağlantısı yok , yardımcı
+    //updateUser için yazıldı controller bağlantısı yok , yardımcı method
     private void checkUpdatePermission(User foundUser, User userToUpdate) {
         methodHelper.checkBuiltIn(userToUpdate);
 
@@ -265,19 +268,12 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<Page<UserResponse>> getAllUsersMostBorrowersByPage(int page, int size) {
-        Pageable pageable = pageableHelper.getPageableWithProperties(page, size);
 
-        return ResponseEntity.ok(userRepository.findByUsersMostBorrowers(pageable).map(userMapper::mapUserToUserResponse));
-    }
+    // public long countAllAdmins() { return userRepository.countAdmin(RoleType.ADMIN);  }
 
-    public long countAllAdmins() {
-        return userRepository.countAdmin(RoleType.ADMIN);
-    }
 
-    //todo : kontrol edilecek
     public ResponseEntity<UserResponse> saveUser(UserRequest adminRequest, String userRole) {
-        //!!! username - ssn- phoneNumber unique mi kontrolu ??
+        //!!! email ve phoneNumber ile unique mi kontrolu yapıldı...
         uniquePropertyValidator.checkDuplicate(adminRequest.getPhone(), adminRequest.getEmail());
         //!!! DTO --> POJO
         User user = userMapper.mapUserRequestForAdminToUser(adminRequest);
@@ -299,13 +295,11 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        return ResponseEntity.ok(userMapper.mapUserToUserResponse(savedUser))
+        return ResponseEntity.ok(userMapper.mapUserToUserResponse(savedUser));
 
     }
 
-    public long countMembers(RoleType roleType) {
-        return userRepository.countByRoleType(roleType.getName());
-    }
+    public long countMembers(RoleType roleType) {return userRepository.countByRoleType(roleType.getName()); }
 
     public ResponseEntity<String> updateUserPassword(UserRequestForUpdatePassword userRequestForUpdatePassword, Long userId, HttpServletRequest httpServletRequest) {
 
