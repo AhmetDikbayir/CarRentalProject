@@ -14,15 +14,16 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/reservation")
+@RequestMapping("/reservations")
 @RequiredArgsConstructor
 public class ReservationController {
 
     private final ReservationService reservationService;
 
+    //todo total price hesaplanıp döndürülecek --- save-update reservation
 
     //Not: saveReservation() *********************************************************************
-    @PostMapping // http://localhost:8085/car   + POST
+    @PostMapping // http://localhost:8085/reservations   + POST
     public ResponseEntity<Map<String, String>> saveReservation(@RequestBody @Valid ReservationRequest reservationRequest) {
 
         reservationService.saveReservation(reservationRequest);
