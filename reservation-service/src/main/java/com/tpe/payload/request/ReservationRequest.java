@@ -19,14 +19,10 @@ public class ReservationRequest {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime endReservationDateTime;
 
-    @NotNull
-    private String reservationStatus;
+    //todo user httpreuest den mi alınacak?
 
-    @NotNull
-    private Double pricePerHour;
-
-    @NotNull
-    private Long userId;
+    //@NotNull
+    //private Long userId;
 
     @NotNull
     private Long carId;

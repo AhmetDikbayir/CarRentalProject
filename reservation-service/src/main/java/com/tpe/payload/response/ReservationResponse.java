@@ -22,7 +22,5 @@ public class ReservationResponse {
 
     private Double pricePerHour;
 
-    private Long userId;
-
     private Long carId;
 }
