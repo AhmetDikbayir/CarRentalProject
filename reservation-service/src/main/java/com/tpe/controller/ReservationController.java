@@ -38,7 +38,7 @@ public class ReservationController {
     }
 
     //Not: updateReservation() *********************************************************************
-    @PutMapping("/updateCar") // http://localhost:8085/reservations/updateCar   + PUT
+    @PutMapping("/reservationId") // http://localhost:8085/reservations/updateCar   + PUT
     public ResponseEntity<ReservationResponse> updateReservation(@RequestBody @Valid ReservationRequest reservationRequest, Long reservationId) {
 
         return reservationService.updateReservation(reservationRequest, reservationId);
