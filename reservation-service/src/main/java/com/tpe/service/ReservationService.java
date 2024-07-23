@@ -3,6 +3,7 @@ package com.tpe.service;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
 import com.tpe.domain.Reservation;
+import com.tpe.domain.User;
 import com.tpe.dto.AppLogRequest;
 import com.tpe.payload.request.ReservationRequest;
 import com.tpe.enums.AppLogLevel;
@@ -10,15 +11,16 @@ import com.tpe.exceptions.ResourceNotFoundException;
 import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.payload.response.ReservationResponse;
 import com.tpe.repository.ReservationRepository;
+import com.tpe.helper.MethodHelper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,13 +29,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReservationService {
 
-    @Autowired
-    private ReservationRepository reservationRepository;
+    private final ReservationRepository reservationRepository;
 
     private final ModelMapper modelMapper;
     private final EurekaClient eurekaClient;
     private final RestTemplate restTemplate;
     private final UniquePropertyValidator uniquePropertyValidator;
+    private final MethodHelper methodHelper;
+
+    private final UserService userService;
 
     //Not: saveReservation() *********************************************************************
     public void saveReservation(ReservationRequest reservationRequest) {
@@ -112,10 +116,10 @@ public class ReservationService {
     }
 
     //Not: getById() ************************************************************************
-    public ReservationResponse getById(Long id) {
+    public ReservationResponse getById(Long reservationId) {
 
-        Reservation reservation = reservationRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, id)));
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, reservationId)));
 
         ReservationResponse reservationResponse = mapReservationToReservationDTO(reservation);
         return reservationResponse;
@@ -135,5 +139,10 @@ public class ReservationService {
     }
 
 
-
+    public ReservationResponse getOwnReservationInformation(
+            HttpServletRequest httpServletRequest, Long resId) {
+        String email = (String) httpServletRequest.getAttribute("username");
+        User user = userService.
+        methodHelper.isReservationExistsById(resId);
+    }
 }

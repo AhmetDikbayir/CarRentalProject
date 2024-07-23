@@ -1,0 +1,27 @@
+package com.tpe.dto;
+
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+public class ReservationResponse {
+
+    private Long id;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime startReservationDateTime;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime endReservationDateTime;
+
+    private String reservationStatus;
+
+    private Double pricePerHour;
+
+    private Long carId;
+}
+

@@ -1,5 +1,6 @@
 package com.tpe;
 
+import com.tpe.helper.MethodHelper;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NamingConventions;
@@ -26,6 +27,11 @@ public class ReservationServiceApplication {
 				.setSourceNamingConvention(NamingConventions.JAVABEANS_MUTATOR);
 
 		return modelMapper;
+	}
+
+	@Bean
+	public MethodHelper methodHelper(){
+		return new MethodHelper();
 	}
 
 	@Bean

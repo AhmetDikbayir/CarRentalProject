@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -37,24 +38,33 @@ public class ReservationController {
     }
 
     //Not: updateReservation() *********************************************************************
-    @PutMapping("/updateCar") // http://localhost:8085/car   + POST
+    @PutMapping("/updateCar") // http://localhost:8085/reservations/updateCar   + PUT
     public ResponseEntity<ReservationResponse> updateReservation(@RequestBody @Valid ReservationRequest reservationRequest, Long reservationId) {
 
         return reservationService.updateReservation(reservationRequest, reservationId);
 
     }
     //Not: getAllReservations() *********************************************************************
-    @GetMapping
-    public ResponseEntity<List<ReservationResponse>> getAllCars(){
+    @GetMapping("/allReservations") // http://localhost:8085/reservations/allReservations   + GET
+    public ResponseEntity<List<ReservationResponse>> getAllReservations(){
         List<ReservationResponse> allReservations = reservationService.getAllReservations();
         return ResponseEntity.ok(allReservations);
     }
 
     //Not: getById() ************************************************************************
-    @GetMapping("/{id}")
-    public ResponseEntity<ReservationResponse> getReservation(@PathVariable Long id) {
-        ReservationResponse reservationResponse = reservationService.getById(id);
+    @GetMapping("/{reservationId}") // http://localhost:8085/reservations/1   + GET
+    public ResponseEntity<ReservationResponse> getReservation(@PathVariable Long reservationId) {
+        ReservationResponse reservationResponse = reservationService.getById(reservationId);
        return ResponseEntity.ok(reservationResponse);
+    }
+
+    // getOwnReservationInformation *******************************
+    @GetMapping("/{resId}")
+    public ResponseEntity<ReservationResponse> getOwnReservationInformation(
+            HttpServletRequest httpServletRequest,
+            @PathVariable Long resId){
+        return ResponseEntity.ok(reservationService
+                .getOwnReservationInformation(httpServletRequest, resId));
     }
 
 

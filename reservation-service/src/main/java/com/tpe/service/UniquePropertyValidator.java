@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UniquePropertyValidator {
 
-    private final ReservationRepository carRepository;
-    private final ReservationService carService;
+
+    private final ReservationService reservationService;
 
     public void checkReservationStatus() {
     }
