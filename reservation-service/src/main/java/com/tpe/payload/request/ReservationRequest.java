@@ -21,8 +21,8 @@ public class ReservationRequest {
 
     //todo user httpreuest den mi alınacak?
 
-    //@NotNull
-    //private Long userId;
+    @NotNull
+    private Long userId;
 
     @NotNull
     private Long carId;
