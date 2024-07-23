@@ -38,4 +38,8 @@ public class Car {
     @Column(nullable = false, unique = true)
     private String numberPlate;
 
+    @Column(nullable = false)
+    private boolean isAvailable;
+    //TODO:rezervasyon olustururken bu field i setle.
+
 }

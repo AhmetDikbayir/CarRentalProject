@@ -32,7 +32,7 @@ public class Reservation {
     private LocalDateTime endReservationDateTime;
 
     @Column(nullable = false, unique = true)
-    private String reservationStatus;
+    private Boolean reservationStatus;
 
     @Column(nullable = false)
     private Double pricePerHour;

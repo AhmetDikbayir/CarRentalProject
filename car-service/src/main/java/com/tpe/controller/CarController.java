@@ -1,5 +1,6 @@
 package com.tpe.controller;
 
+import com.tpe.domain.Car;
 import com.tpe.dto.CarResponse;
 import com.tpe.dto.CarRequest;
 import com.tpe.service.CarService;
@@ -36,13 +37,24 @@ public class CarController {
     }
 
     //Not: updateCar() *********************************************************************
-    @PutMapping("/updateCar") // http://localhost:8085/car   + POST
+    @PutMapping("/updateCar") // http://localhost:8085/car/updateCar   + PUT
     public ResponseEntity<CarResponse> updateCar(@RequestBody @Valid CarRequest carRequest, Long carId) {
 
         return carService.updateCar(carRequest, carId);
 
     }
-    //Not:delete car
+    //Not:delete car() **************************************************************************
+    @DeleteMapping("/deleteCar/{carId}") // http://localhost:8085/car/deleteCar/{carId}   + DELETE
+    public ResponseEntity<CarResponse> deleteCar(@PathVariable Long carId){
+
+        return carService.deleteCar(carId);
+    }
+
+
+
+
+
+
     //Not:upload image file
     //Not:get all image file
 
