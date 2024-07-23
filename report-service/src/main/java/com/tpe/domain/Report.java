@@ -7,15 +7,17 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Entity
-public class Reports {
+public class Report {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String type;
-    private String status;
-    private LocalDateTime createdAt;
-    private String downloadUrl;
+
+    private String reportType; // e.g., "user_report", "car_report", "reservation_report"
+
+    private String status; // e.g., "pending", "generated", "failed"
+
+    private LocalDateTime generatedAt;
 
 
 }
