@@ -49,6 +49,12 @@ public class ReservationService {
 
     //Not: saveReservation() *********************************************************************
     public ReservationResponse saveReservation(ReservationRequest reservationRequest) {
+        // Tarihlerin geçerliliğini kontrol et
+        if (reservationRequest.getStartReservationDateTime().isAfter(reservationRequest.getEndReservationDateTime())) {
+            throw new IllegalArgumentException("Başlangıç tarihi bitiş tarihinden sonra olamaz.");
+        }
+
+        // Tarihlerdeki çakışmayı kontrol et
         List<Reservation> existingReservations = reservationRepository.findReservationsForCarInDateRange(
                 reservationRequest.getCarId(),
                 reservationRequest.getStartReservationDateTime(),
@@ -59,19 +65,27 @@ public class ReservationService {
             throw new ResourceNotFoundException("Belirtilen tarihler arasında araç zaten rezerve edilmiş.");
         }
 
-        Reservation reservation = reservationMapper.mapReservationRequestToReservation(reservationRequest);
+        // Araç ve kullanıcı kontrolü
+        Car car = carService.isCarExistsById(reservationRequest.getCarId());
+        User user = userRepository.findById(reservationRequest.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("Kullanıcı bulunamadı."));
 
-        // Toplam fiyatı hesaplayın
+        // Rezervasyonu oluştur
+        Reservation reservation = reservationMapper.mapReservationRequestToReservation(reservationRequest);
+        reservation.setCar(car);
+        reservation.setUser(user);
+
+        // Toplam fiyatı hesapla
         long hours = ChronoUnit.HOURS.between(reservation.getStartReservationDateTime(), reservation.getEndReservationDateTime());
         Double totalPrice = hours * reservation.getPricePerHour();
         reservation.setTotalPrice(totalPrice);
 
-        
+        // Rezervasyonu kaydet
         reservationRepository.save(reservation);
 
         sendLog("Save a Reservation: " + reservation.getId());
 
-        // Yanıt oluşturun
+        // Yanıt oluştur
         ReservationResponse response = new ReservationResponse();
         response.setId(reservation.getId());
         response.setTotalPrice(totalPrice);
@@ -80,14 +94,19 @@ public class ReservationService {
 
 
 
+
     @Transactional
     public ResponseEntity<ReservationResponse> updateReservation(ReservationRequest reservationRequest, Long reservationId) {
-
-        // Var mı kontrolü
+        // Rezervasyonun mevcut olup olmadığını kontrol et
         Reservation existingReservation = reservationRepository.findById(reservationId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, reservationId)));
 
-        // Rezervasyon tarih aralığında çakışma kontrolü
+        // Tarihlerin geçerliliğini kontrol et
+        if (reservationRequest.getStartReservationDateTime().isAfter(reservationRequest.getEndReservationDateTime())) {
+            throw new IllegalArgumentException("Başlangıç tarihi bitiş tarihinden sonra olamaz.");
+        }
+
+        // Tarihlerdeki çakışmayı kontrol et
         boolean isAvailable = checkReservationStatus(reservationRequest.getCarId(),
                 reservationRequest.getStartReservationDateTime(),
                 reservationRequest.getEndReservationDateTime());
@@ -96,9 +115,10 @@ public class ReservationService {
             throw new ResourceNotFoundException("Belirtilen tarihler arasında araç zaten rezerve edilmiş.");
         }
 
-        // Car ve User nesnelerini alın
+        // Car ve User nesnelerini al
         Car car = carService.isCarExistsById(reservationRequest.getCarId());
-        User user = methodHelper.isUserExist(reservationRequest.getUserId());
+        User user = userRepository.findById(reservationRequest.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("Kullanıcı bulunamadı."));
 
         // Rezervasyonu güncelle
         existingReservation.setStartReservationDateTime(reservationRequest.getStartReservationDateTime());
@@ -106,11 +126,12 @@ public class ReservationService {
         existingReservation.setCar(car);
         existingReservation.setUser(user);
 
-        // Toplam fiyatı hesaplayın
+        // Toplam fiyatı hesapla
         long hours = ChronoUnit.HOURS.between(existingReservation.getStartReservationDateTime(), existingReservation.getEndReservationDateTime());
         Double totalPrice = hours * existingReservation.getPricePerHour();
         existingReservation.setTotalPrice(totalPrice);
 
+        // Rezervasyonu kaydet
         reservationRepository.save(existingReservation);
 
         sendLog("Update a Reservation: " + existingReservation.getId());
