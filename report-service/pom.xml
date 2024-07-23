@@ -85,6 +85,13 @@
 			<version>5.0.0</version>
 		</dependency>
 
+		<!-- SWAGGER EKLENTISI ****************-->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.6.9</version>
+		</dependency>
+
 
 	</dependencies>
 	<dependencyManagement>
