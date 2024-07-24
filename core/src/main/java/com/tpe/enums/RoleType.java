@@ -1,4 +1,4 @@
-package com.tpe.domain.enums;
+package com.tpe.enums;
 
 public enum RoleType {
 

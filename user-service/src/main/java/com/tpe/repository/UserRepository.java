@@ -2,9 +2,8 @@ package com.tpe.repository;
 
 
 import com.tpe.domain.User;
-import com.tpe.domain.enums.RoleType;
+import com.tpe.enums.RoleType;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
