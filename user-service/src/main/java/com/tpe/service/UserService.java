@@ -1,7 +1,7 @@
 package com.tpe.service;
 
 import com.tpe.domain.User;
-import com.tpe.domain.enums.RoleType;
+import com.tpe.enums.RoleType;
 import com.tpe.exceptions.BadRequestException;
 import com.tpe.exceptions.ResourceNotFoundException;
 import com.tpe.payload.mappers.UserMapper;
