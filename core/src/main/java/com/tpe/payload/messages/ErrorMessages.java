@@ -13,8 +13,6 @@ public class ErrorMessages {
 
     public static final String RESERVATION_NOT_AVAILABLE = "Reservation with ID %d is not available for the specified time range";
 
-    public static final String RESERVATION_DOES_NOT_EXISTS_BY_ID = "Reservation not found by id %s";
-
     public static final String USER_NOT_ADMIN = "User is not Admin";
     public static final String NOT_PERMITTED_METHOD_MESSAGE="You don't have any authority for this...";
 
@@ -36,5 +34,7 @@ public class ErrorMessages {
     public static final String CUSTOMER_CAN_ONLY_UPDATE_OWN_MESSAGE = "Customer can only update own information.";
 
     public static final String RESERVATION_NOT_EMPTY = "Reservation is not empty...";
+
+    public static final String RESERVATION_DOES_NOT_EXISTS_BY_ID = "Reservation not found by id %s";
 
 }

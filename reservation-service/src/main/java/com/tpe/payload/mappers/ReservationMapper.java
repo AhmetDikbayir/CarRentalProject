@@ -5,15 +5,17 @@ import com.tpe.domain.User;
 import com.tpe.payload.request.ReservationRequest;
 import com.tpe.payload.response.ReservationResponse;
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 @Component
+@RequiredArgsConstructor
 public class ReservationMapper {
 
     private final User user;
 
-    public ReservationMapper(User user) {
-        this.user = user;
-    }
+//    public ReservationMapper(User user) {
+//        this.user = user;
+//    }
 
     public ReservationResponse mapReservationToReservationResponse(Reservation reservation) {
         return ReservationResponse.builder()
@@ -22,7 +24,7 @@ public class ReservationMapper {
                 .endReservationDateTime(reservation.getEndReservationDateTime())
                 .reservationStatus(reservation.getReservationStatus())
                 .pricePerHour(reservation.getPricePerHour())
-                .carId(reservation.getCar().getId())
+                .car(reservation.getCar())
                 .build();
     }
 

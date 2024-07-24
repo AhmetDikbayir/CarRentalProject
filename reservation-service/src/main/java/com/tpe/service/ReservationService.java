@@ -13,12 +13,10 @@ import com.tpe.exceptions.ResourceNotFoundException;
 import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.payload.response.ReservationResponse;
 import com.tpe.repository.ReservationRepository;
-import com.tpe.helper.MethodHelper;
 
+import com.tpe.service.helper.UserMethodHelper;
+import com.tpe.service.helper.ReservationMethodHelper;
 import lombok.RequiredArgsConstructor;
-import org.bouncycastle.its.asn1.Duration;
-import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -36,17 +35,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReservationService {
 
-
     private final ReservationRepository reservationRepository;
-
 
     private final ReservationMapper reservationMapper;
     private final EurekaClient eurekaClient;
     private final RestTemplate restTemplate;
     private final CarService carService;
-    private final MethodHelper methodHelper;
+    private final UserMethodHelper userMethodHelper;
+    private final ReservationMethodHelper reservationMethodHelper;
     private final UniquePropertyValidator uniquePropertyValidator;
-    private final MethodHelper methodHelper;
 
     private final UserService userService;
 
@@ -59,7 +56,7 @@ public class ReservationService {
 
         // Tarihlerdeki çakışmayı kontrol et
         List<Reservation> existingReservations = reservationRepository.findReservationsForCarInDateRange(
-                reservationRequest.getCarId(),
+                reservationRequest.getCar().getId(),
                 reservationRequest.getStartReservationDateTime(),
                 reservationRequest.getEndReservationDateTime()
         );
@@ -69,14 +66,13 @@ public class ReservationService {
         }
 
         // Araç ve kullanıcı kontrolü
-        Car car = carService.isCarExistsById(reservationRequest.getCarId());
-        User user = userRepository.findById(reservationRequest.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("Kullanıcı bulunamadı."));
+        Car car = carService.isCarExistsById(reservationRequest.getCar().getId());
+
 
         // Rezervasyonu oluştur
         Reservation reservation = reservationMapper.mapReservationRequestToReservation(reservationRequest);
         reservation.setCar(car);
-        reservation.setUser(user);
+        reservation.setUser(userMethodHelper.isUserExist(reservationRequest.getUser().getId()));
 
         // Toplam fiyatı hesapla
         long hours = ChronoUnit.HOURS.between(reservation.getStartReservationDateTime(), reservation.getEndReservationDateTime());
@@ -95,9 +91,6 @@ public class ReservationService {
         return response;
     }
 
-
-
-
     @Transactional
     public ResponseEntity<ReservationResponse> updateReservation(ReservationRequest reservationRequest, Long reservationId) {
         // Rezervasyonun mevcut olup olmadığını kontrol et
@@ -110,7 +103,7 @@ public class ReservationService {
         }
 
         // Tarihlerdeki çakışmayı kontrol et
-        boolean isAvailable = checkReservationStatus(reservationRequest.getCarId(),
+        boolean isAvailable = checkReservationStatus(reservationRequest.getCar().getId(),
                 reservationRequest.getStartReservationDateTime(),
                 reservationRequest.getEndReservationDateTime());
 
@@ -119,9 +112,8 @@ public class ReservationService {
         }
 
         // Car ve User nesnelerini al
-        Car car = carService.isCarExistsById(reservationRequest.getCarId());
-        User user = userRepository.findById(reservationRequest.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("Kullanıcı bulunamadı."));
+        Car car = carService.isCarExistsById(reservationRequest.getCar().getId());
+        User user = userMethodHelper.isUserExist(reservationRequest.getUser().getId());
 
         // Rezervasyonu güncelle
         existingReservation.setStartReservationDateTime(reservationRequest.getStartReservationDateTime());
@@ -142,9 +134,6 @@ public class ReservationService {
         return ResponseEntity.ok(reservationMapper.mapReservationToReservationResponse(existingReservation));
     }
 
-
-
-
     //Not: getAllReservations() *********************************************************************
     public List<ReservationResponse> getAllReservations() {
         List<Reservation> reservationList = reservationRepository.findAll();
@@ -153,14 +142,14 @@ public class ReservationService {
                 .collect(Collectors.toList());
     }
 
-
-
     //Not: getById() ************************************************************************
 
     public ReservationResponse getById(Long reservationId) {
 
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, reservationId)));
+        return reservationMapper.mapReservationToReservationResponse(reservation);
+    }
 
     public ReservationResponse getById(Long id, String username) {
         Reservation reservation = reservationRepository.findById(id).orElseThrow(() ->
@@ -173,24 +162,19 @@ public class ReservationService {
                 throw new RuntimeException(e);
             }
         }
-
         return reservationMapper.mapReservationToReservationResponse(reservation);
     }
 
-
     //Not: deleteReservation() ************************************************************************
-    @Transactional
     public void deleteReservation(Long id) {
         Reservation reservation = reservationRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, id)));
-
-
-        reservationRepository.delete(reservation);
-
+                    new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, id)));
+            reservationRepository.delete(reservation);
         sendLog("Reservation deleted: " + reservation.getId());
     }
 
-    public boolean checkReservationStatus(Long reservationId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public boolean checkReservationStatus(Long reservationId, LocalDateTime startDateTime, LocalDateTime
+            endDateTime) {
         List<Reservation> reservations = reservationRepository.findReservationsForCarInDateRange(reservationId, startDateTime, endDateTime);
 
         if (reservations.isEmpty()) {
@@ -201,7 +185,7 @@ public class ReservationService {
     }
 
     private Reservation checkReservationStatus(Long reservationId) {
-    return null;
+        return null;
     }
 
     private void sendLog(String description) {
@@ -214,12 +198,19 @@ public class ReservationService {
         appLogDTO.setLevel(AppLogLevel.INFO.name());
         appLogDTO.setDescription(description);
         appLogDTO.setTime(LocalDateTime.now());
+    }
 
     public ReservationResponse getOwnReservationInformation(
             HttpServletRequest httpServletRequest, Long resId) {
         String email = (String) httpServletRequest.getAttribute("username");
-        User user = userService.
-        methodHelper.isReservationExistsById(resId);
+        Reservation ownReservation = reservationMethodHelper.isReservationExistsById(resId);
+        User user = userMethodHelper.isUserExistByEmail(email);
+        for (Reservation reservation : user.getReservationList()) {
+            if (resId.equals(reservation.getId())) {
+                return reservationMapper.mapReservationToReservationResponse(reservation);
+            }
+        }
+        // Rezervasyon kullanıcının listesinde bulunamadıysa hata fırlat
+        throw new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, resId));
     }
-
 }

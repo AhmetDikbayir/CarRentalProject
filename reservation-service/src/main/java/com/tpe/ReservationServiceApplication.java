@@ -30,11 +30,6 @@ public class ReservationServiceApplication {
 	}
 
 	@Bean
-	public MethodHelper methodHelper(){
-		return new MethodHelper();
-	}
-
-	@Bean
 	// !!! RestTemplate , Client gibi request olusturmamizi sagliyor
 	public RestTemplate restTemplate() {
 		return new RestTemplate();

@@ -2,6 +2,7 @@ package com.tpe.payload.response;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.tpe.domain.Car;
 import jdk.jshell.Snippet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,7 +31,9 @@ public class ReservationResponse {
 
     private Double pricePerHour;
 
-    private Long carId;
+//    private Long carId;
+
+    private Car car;
 
     private Double totalPrice;
 
