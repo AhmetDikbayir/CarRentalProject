@@ -1,26 +1,20 @@
-package com.tpe.helper;
+package com.tpe.service.helper;
 
-
+import com.tpe.domain.User;
+import com.tpe.domain.enums.RoleType;
+import com.tpe.exception.BadRequestException;
+import com.tpe.exception.ResourceNotFoundException;
 import com.tpe.payload.messages.ErrorMessages;
+import com.tpe.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Component
 @RequiredArgsConstructor
-public class MethodHelper {
-
-    private final ReservationService reservationService;
-    private final ReservationRepository reservationRepository;
-
-    public Reservation isReservationExistsById(Long reservationId){
-        return reservationRepository.findById(reservationId).orElseThrow(
-                ()->new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID + reservationId))
-        );
-
-    }
-
+public class UserMethodHelper {
     private final UserRepository userRepository;
     //private final LoanRepository loanRepository;
 
@@ -70,4 +64,5 @@ public class MethodHelper {
 
         return loanRepository.findAll();
     }*/
+
 }

@@ -8,11 +8,10 @@ import com.tpe.payload.mappers.UserMapper;
 import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.payload.messages.SuccessMessages;
 import com.tpe.payload.request.*;
-import com.tpe.payload.response.SigninResponse;
 import com.tpe.payload.response.UserResponse;
 import com.tpe.repository.UserRepository;
 import com.tpe.repository.UserRoleRepository;
-import com.tpe.service.helper.MethodHelper;
+import com.tpe.service.helper.UserMethodHelper;
 import com.tpe.service.helper.PageableHelper;
 import com.tpe.service.validator.UniquePropertyValidator;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +47,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final PageableHelper pageableHelper;
     private final UserRoleService userRoleService;
-    private final MethodHelper methodHelper;
+    private final UserMethodHelper methodHelper;
 
 /*
     public ResponseEntity<SigninResponse> authenticateUser(SigninRequest signInRequest) {
