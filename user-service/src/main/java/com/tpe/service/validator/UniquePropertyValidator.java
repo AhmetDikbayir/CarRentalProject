@@ -3,7 +3,7 @@ package com.tpe.service.validator;
 
 
 import com.tpe.domain.User;
-import com.tpe.exception.ConflictException;
+import com.tpe.exceptions.ConflictException;
 import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.payload.request.UserRequestForCreateOrUpdate;
 import com.tpe.repository.UserRepository;

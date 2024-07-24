@@ -16,7 +16,4 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                                                         @Param("startDateTime") LocalDateTime startDateTime,
                                                         @Param("endDateTime") LocalDateTime endDateTime);
 
-    boolean existsByCarIdAndReservationStatusAndStartReservationDateTimeLessThanEqualAndEndReservationDateTimeGreaterThanEqual(
-            Long carId, Boolean reservationStatus, LocalDateTime endDateTime, LocalDateTime startDateTime);
-
 }
