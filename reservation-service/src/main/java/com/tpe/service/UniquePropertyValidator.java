@@ -15,6 +15,10 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class UniquePropertyValidator {
 
+
+
+    private final ReservationService reservationService;
+
     private final ReservationRepository carRepository;
     private final ReservationService carService;
     private final ReservationRepository reservationRepository;
@@ -28,6 +32,7 @@ public class UniquePropertyValidator {
             throw new ResourceNotFoundException(ErrorMessages.RESERVATION_NOT_AVAILABLE);
         }
     }
+
 
     public void checkUniqueProperties(Reservation reservation, ReservationRequest reservationRequest) {
     }

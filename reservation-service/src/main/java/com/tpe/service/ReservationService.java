@@ -13,19 +13,20 @@ import com.tpe.exceptions.ResourceNotFoundException;
 import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.payload.response.ReservationResponse;
 import com.tpe.repository.ReservationRepository;
-import com.tpe.repository.UserRepository;
-import com.tpe.service.helper.MethodHelper;
+import com.tpe.helper.MethodHelper;
+
 import lombok.RequiredArgsConstructor;
 import org.bouncycastle.its.asn1.Duration;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.nio.file.AccessDeniedException;
+
+import javax.servlet.http.HttpServletRequest;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -35,10 +36,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReservationService {
 
-    @Autowired
-    private ReservationRepository reservationRepository;
-    @Autowired
-    private UserRepository userRepository;
+
+    private final ReservationRepository reservationRepository;
+
 
     private final ReservationMapper reservationMapper;
     private final EurekaClient eurekaClient;
@@ -46,6 +46,9 @@ public class ReservationService {
     private final CarService carService;
     private final MethodHelper methodHelper;
     private final UniquePropertyValidator uniquePropertyValidator;
+    private final MethodHelper methodHelper;
+
+    private final UserService userService;
 
     //Not: saveReservation() *********************************************************************
     public ReservationResponse saveReservation(ReservationRequest reservationRequest) {
@@ -153,6 +156,12 @@ public class ReservationService {
 
 
     //Not: getById() ************************************************************************
+
+    public ReservationResponse getById(Long reservationId) {
+
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, reservationId)));
+
     public ReservationResponse getById(Long id, String username) {
         Reservation reservation = reservationRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, id)));
@@ -174,6 +183,7 @@ public class ReservationService {
     public void deleteReservation(Long id) {
         Reservation reservation = reservationRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, id)));
+
 
         reservationRepository.delete(reservation);
 
@@ -205,11 +215,11 @@ public class ReservationService {
         appLogDTO.setDescription(description);
         appLogDTO.setTime(LocalDateTime.now());
 
-        ResponseEntity<String> logResponse = restTemplate.postForEntity(servicePath, appLogDTO, String.class);
-
-        if (!(logResponse.getStatusCode() == HttpStatus.CREATED)) {
-            throw new ResourceNotFoundException("Log not created");
-        }
+    public ReservationResponse getOwnReservationInformation(
+            HttpServletRequest httpServletRequest, Long resId) {
+        String email = (String) httpServletRequest.getAttribute("username");
+        User user = userService.
+        methodHelper.isReservationExistsById(resId);
     }
 
 }

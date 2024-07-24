@@ -42,21 +42,38 @@ public class ReservationController {
     }
 
     //Not: updateReservation() *********************************************************************
-    @PutMapping("/updateReservation") // http://localhost:8085/updateReservation   + POST
+
+    @PutMapping("/reservationId") // http://localhost:8085/updateReservation   + POST
     public ResponseEntity<ReservationResponse> updateReservation(@RequestBody @Valid ReservationRequest reservationRequest, Long reservationId) {
 
         return reservationService.updateReservation(reservationRequest, reservationId);
 
     }
     //Not: getAllReservations() *********************************************************************
-    @GetMapping   // http://localhost:8085/reservations
-    //@PreAuthorize("hasAnyAuthority('ADMIN')")
+
+    @GetMapping("/allReservations") // http://localhost:8085/reservations/allReservations   + GET
     public ResponseEntity<List<ReservationResponse>> getAllReservations(){
         List<ReservationResponse> allReservations = reservationService.getAllReservations();
         return ResponseEntity.ok(allReservations);
     }
 
     //Not: getById() ************************************************************************
+
+    @GetMapping("/{reservationId}") // http://localhost:8085/reservations/1   + GET
+    public ResponseEntity<ReservationResponse> getReservation(@PathVariable Long reservationId) {
+        ReservationResponse reservationResponse = reservationService.getById(reservationId);
+       return ResponseEntity.ok(reservationResponse);
+    }
+
+    // getOwnReservationInformation *******************************
+    @GetMapping("/{resId}")
+    public ResponseEntity<ReservationResponse> getOwnReservationInformation(
+            HttpServletRequest httpServletRequest,
+            @PathVariable Long resId){
+        return ResponseEntity.ok(reservationService
+                .getOwnReservationInformation(httpServletRequest, resId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ReservationResponse> getReservation(@PathVariable Long id, HttpServletRequest request) {
         String username = request.getUserPrincipal().getName();
