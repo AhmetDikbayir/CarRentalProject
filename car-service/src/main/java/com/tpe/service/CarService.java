@@ -9,7 +9,9 @@ import com.tpe.dto.CarRequest;
 import com.tpe.enums.AppLogLevel;
 import com.tpe.exceptions.ConflictException;
 import com.tpe.exceptions.ResourceNotFoundException;
+import com.tpe.payload.bussiness.ResponseMessage;
 import com.tpe.payload.messages.ErrorMessages;
+import com.tpe.payload.messages.SuccessMessages;
 import com.tpe.repository.CarRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -54,13 +56,13 @@ public class CarService {
 
         AppLogRequest appLogDTO = new AppLogRequest();
         appLogDTO.setLevel(AppLogLevel.INFO.name());
-        appLogDTO.setDescription("Save a Car: " + car.getId());
+        appLogDTO.setDescription(SuccessMessages.CAR_CREATE + car.getId());
         appLogDTO.setTime(LocalDateTime.now());
 
         ResponseEntity<String> logResponse = restTemplate.postForEntity(servicePath, appLogDTO, String.class);
 
         if (!(logResponse.getStatusCode() == HttpStatus.CREATED)) {
-            throw new ResourceNotFoundException("Log not created");
+            throw new ResourceNotFoundException(ErrorMessages.LOG_NOT_CREATED);
         }
 
         //logging loglama
@@ -88,7 +90,7 @@ public class CarService {
 
         AppLogRequest appLogDTO = new AppLogRequest();
         appLogDTO.setLevel(AppLogLevel.INFO.name());
-        appLogDTO.setDescription("Car is updated by this id: " + car.getId());
+        appLogDTO.setDescription(SuccessMessages.CAR_UPDATE + car.getId());
         appLogDTO.setTime(LocalDateTime.now());
 
         ResponseEntity<String> logResponse = restTemplate.postForEntity(servicePath, appLogDTO, String.class);
@@ -97,6 +99,7 @@ public class CarService {
             throw new ResourceNotFoundException(ErrorMessages.LOG_NOT_CREATED);
         }
 
+     //   ResponseMessage.<CarResponse>builder().message(SuccessMessages.ADMIN_CREATE).httpStatus(HttpStatus.OK).object(mapCarToCarDTO(updatedCar));
         return ResponseEntity.ok(mapCarToCarDTO(updatedCar));
     }
 
@@ -150,7 +153,7 @@ public class CarService {
 
         AppLogRequest appLogDTO = new AppLogRequest();
         appLogDTO.setLevel(AppLogLevel.INFO.name());
-        appLogDTO.setDescription("Save a Car: " + foundCar.getId());
+        appLogDTO.setDescription(SuccessMessages.CAR_DELETE + foundCar.getId());
         appLogDTO.setTime(LocalDateTime.now());
 
         ResponseEntity<String> logResponse = restTemplate.postForEntity(servicePath, appLogDTO, String.class);

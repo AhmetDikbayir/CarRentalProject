@@ -1,0 +1,9 @@
+server:
+port: 8066
+
+spring:
+application:
+name: contactmessage-service
+
+config:
+import: optional:configserver:http://localhost:8090

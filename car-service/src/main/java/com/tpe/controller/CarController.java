@@ -21,7 +21,6 @@ public class CarController {
 
     private final CarService carService;
 
-
     //Not: saveCar() *********************************************************************
     @PostMapping // http://localhost:8085/car   + POST
     public ResponseEntity<Map<String, String>> saveCar(@RequestBody @Valid CarRequest carRequest) {
@@ -49,11 +48,6 @@ public class CarController {
 
         return carService.deleteCar(carId);
     }
-
-
-
-
-
 
     //Not:upload image file
     //Not:get all image file
