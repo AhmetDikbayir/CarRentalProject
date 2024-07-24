@@ -3,7 +3,7 @@ package com.tpe.service;
 
 import com.tpe.domain.Role;
 import com.tpe.domain.enums.RoleType;
-import com.tpe.exception.ResourceNotFoundException;
+import com.tpe.exceptions.ResourceNotFoundException;
 import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.repository.UserRoleRepository;
 import lombok.RequiredArgsConstructor;

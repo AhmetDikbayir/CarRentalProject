@@ -1,7 +1,7 @@
 package com.tpe.service;
 
 import com.tpe.domain.Reservation;
-import com.tpe.payload.messages.ResourceNotFoundException;
+import com.tpe.exceptions.ResourceNotFoundException;
 import com.tpe.payload.request.ReservationRequest;
 import com.tpe.exceptions.ConflictException;
 import com.tpe.payload.messages.ErrorMessages;
@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -25,10 +26,10 @@ public class UniquePropertyValidator {
 
 
     public void checkReservationStatus(Long carId, LocalDateTime startReservationDateTime, LocalDateTime endReservationDateTime) {
-        boolean exists = reservationRepository.existsByCarIdAndReservationStatusAndStartReservationDateTimeLessThanEqualAndEndReservationDateTimeGreaterThanEqual(
-                carId, true, endReservationDateTime, startReservationDateTime);
+        List<Reservation> foundReservations = reservationRepository.findReservationsForCarInDateRange(
+                carId, endReservationDateTime, startReservationDateTime);
 
-        if (exists) {
+        if (foundReservations.size()!=0) {
             throw new ResourceNotFoundException(ErrorMessages.RESERVATION_NOT_AVAILABLE);
         }
     }
