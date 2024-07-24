@@ -105,10 +105,7 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         return ResponseEntity.ok(userMapper.mapUserToUserResponse(savedUser));
-
     }
-
-
 
     public ResponseEntity<UserResponse> getAuthenticatedUser(HttpServletRequest httpServletRequest) {
 
@@ -117,7 +114,6 @@ public class UserService {
         User foundUser = userRepository.findByEmail(email);
 
         return ResponseEntity.ok(userMapper.mapUserToUserResponse(foundUser));
-
     }
 
     /*public ResponseEntity<Page<LoanResponse>> getAllLoansByUserByPage(HttpServletRequest httpServletRequest,
@@ -129,13 +125,11 @@ public class UserService {
         User foundUser = userRepository.findByEmail(email);
 
         return loanService.getAllLoansByUserIdByPage(foundUser.getId(), page, size, sort, type);
-
     }*/
 
     public ResponseEntity<Page<UserResponse>> getAllUsersByPage(int page, int size, String sort, String type) {
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
         return ResponseEntity.ok(userRepository.findAll(pageable).map(userMapper::mapUserToUserResponse));
-
     }
 
     @Transactional      //todo sorulacak
@@ -162,9 +156,7 @@ public class UserService {
 
         return ResponseEntity.ok(userMapper.mapUserToUserResponse(user));   //Aslında no content 204 kodu
         // döndürmek daha mantıklı olabilir
-
     }
-
 
     public ResponseEntity<UserResponse> createUser(UserRequestForCreateOrUpdate userRequestForCreateOrUpdate, HttpServletRequest httpServletRequest, String userRole){
 
@@ -192,8 +184,6 @@ public class UserService {
         User savedUser = userRepository.save(userToCreate);
 
         return ResponseEntity.ok(userMapper.mapUserToUserResponse(savedUser));
-
-
     }
 
     //create user methodunda role bilgisi setlemek için yazıldı, yardımcı
@@ -244,7 +234,6 @@ public class UserService {
         User savedUser = userRepository.save(updatedUser);
 
         return ResponseEntity.ok(userMapper.mapUserToUserResponse(savedUser));
-
     }
 
     //updateUser için yazıldı controller bağlantısı yok , yardımcı method
@@ -265,9 +254,7 @@ public class UserService {
         }
     }
 
-
     // public long countAllAdmins() { return userRepository.countAdmin(RoleType.ADMIN);  }
-
 
     public ResponseEntity<UserResponse> saveUser(UserRequest adminRequest, String userRole) {
         //!!! email ve phoneNumber ile unique mi kontrolu yapıldı...
@@ -293,9 +280,7 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         return ResponseEntity.ok(userMapper.mapUserToUserResponse(savedUser));
-
     }
-
     public long countMembers(RoleType roleType) {return userRepository.countByRoleType(roleType.getName()); }
 
     public ResponseEntity<String> updateUserPassword(UserRequestForUpdatePassword userRequestForUpdatePassword, Long userId, HttpServletRequest httpServletRequest) {
@@ -317,7 +302,5 @@ public class UserService {
         User savedUser = userRepository.save(updatedUser);
 
         return ResponseEntity.ok(SuccessMessages.PASSWORD_UPDATED);
-
-
     }
 }
