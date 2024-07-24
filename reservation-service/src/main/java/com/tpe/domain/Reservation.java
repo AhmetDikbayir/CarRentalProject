@@ -1,10 +1,7 @@
 package com.tpe.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -14,7 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Builder
 @Entity
 @Table(name="t_reservation")
 public class Reservation {
@@ -36,6 +33,9 @@ public class Reservation {
 
     @Column(nullable = false)
     private Double pricePerHour;
+
+    @Column(nullable = false)
+    private Double totalPrice;
 
     @Column(nullable = false)
     @ManyToOne

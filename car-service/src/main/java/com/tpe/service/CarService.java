@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -161,10 +162,6 @@ public class CarService {
         CarResponse carResponse=mapCarToCarDTO(foundCar);
         return new ResponseEntity<>(carResponse, HttpStatus.OK);
     }
-
-
-
-
 
 
 

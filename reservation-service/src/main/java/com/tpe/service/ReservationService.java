@@ -2,9 +2,11 @@ package com.tpe.service;
 
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
+import com.tpe.domain.Car;
 import com.tpe.domain.Reservation;
 import com.tpe.domain.User;
 import com.tpe.dto.AppLogRequest;
+import com.tpe.payload.mappers.ReservationMapper;
 import com.tpe.payload.request.ReservationRequest;
 import com.tpe.enums.AppLogLevel;
 import com.tpe.exceptions.ResourceNotFoundException;
@@ -12,7 +14,9 @@ import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.payload.response.ReservationResponse;
 import com.tpe.repository.ReservationRepository;
 import com.tpe.helper.MethodHelper;
+
 import lombok.RequiredArgsConstructor;
+import org.bouncycastle.its.asn1.Duration;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +24,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+
 import javax.servlet.http.HttpServletRequest;
+
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,100 +36,158 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReservationService {
 
+
     private final ReservationRepository reservationRepository;
 
-    private final ModelMapper modelMapper;
+
+    private final ReservationMapper reservationMapper;
     private final EurekaClient eurekaClient;
     private final RestTemplate restTemplate;
+    private final CarService carService;
+    private final MethodHelper methodHelper;
     private final UniquePropertyValidator uniquePropertyValidator;
     private final MethodHelper methodHelper;
 
     private final UserService userService;
 
     //Not: saveReservation() *********************************************************************
-    public void saveReservation(ReservationRequest reservationRequest) {
-
-
-        //  isReservationStatus
-        uniquePropertyValidator.checkReservationStatus();
-
-        Reservation reservation = modelMapper.map(reservationRequest, Reservation.class);
-        reservationRepository.save(reservation);
-
-
-        InstanceInfo instanceInfo = eurekaClient.getApplication("log-service").getInstances().get(0);
-
-        String baseUrl = instanceInfo.getHomePageUrl(); // http://localhost:8083
-        String path = "/log";
-        String servicePath = baseUrl + path;   // http://localhost:8083/log
-
-        AppLogRequest appLogDTO = new AppLogRequest();
-        appLogDTO.setLevel(AppLogLevel.INFO.name());
-        appLogDTO.setDescription("Save a Reservation: " + reservation.getId());
-        appLogDTO.setTime(LocalDateTime.now());
-
-        ResponseEntity<String> logResponse = restTemplate.postForEntity(servicePath, appLogDTO, String.class);
-
-        if (!(logResponse.getStatusCode() == HttpStatus.CREATED)) {
-            throw new ResourceNotFoundException("Log not created");
+    public ReservationResponse saveReservation(ReservationRequest reservationRequest) {
+        // Tarihlerin geçerliliğini kontrol et
+        if (reservationRequest.getStartReservationDateTime().isAfter(reservationRequest.getEndReservationDateTime())) {
+            throw new IllegalArgumentException("Başlangıç tarihi bitiş tarihinden sonra olamaz.");
         }
 
+        // Tarihlerdeki çakışmayı kontrol et
+        List<Reservation> existingReservations = reservationRepository.findReservationsForCarInDateRange(
+                reservationRequest.getCarId(),
+                reservationRequest.getStartReservationDateTime(),
+                reservationRequest.getEndReservationDateTime()
+        );
+
+        if (!existingReservations.isEmpty()) {
+            throw new ResourceNotFoundException("Belirtilen tarihler arasında araç zaten rezerve edilmiş.");
+        }
+
+        // Araç ve kullanıcı kontrolü
+        Car car = carService.isCarExistsById(reservationRequest.getCarId());
+        User user = userRepository.findById(reservationRequest.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("Kullanıcı bulunamadı."));
+
+        // Rezervasyonu oluştur
+        Reservation reservation = reservationMapper.mapReservationRequestToReservation(reservationRequest);
+        reservation.setCar(car);
+        reservation.setUser(user);
+
+        // Toplam fiyatı hesapla
+        long hours = ChronoUnit.HOURS.between(reservation.getStartReservationDateTime(), reservation.getEndReservationDateTime());
+        Double totalPrice = hours * reservation.getPricePerHour();
+        reservation.setTotalPrice(totalPrice);
+
+        // Rezervasyonu kaydet
+        reservationRepository.save(reservation);
+
+        sendLog("Save a Reservation: " + reservation.getId());
+
+        // Yanıt oluştur
+        ReservationResponse response = new ReservationResponse();
+        response.setId(reservation.getId());
+        response.setTotalPrice(totalPrice);
+        return response;
     }
+
+
+
 
     @Transactional
     public ResponseEntity<ReservationResponse> updateReservation(ReservationRequest reservationRequest, Long reservationId) {
+        // Rezervasyonun mevcut olup olmadığını kontrol et
+        Reservation existingReservation = reservationRepository.findById(reservationId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, reservationId)));
 
-        //var mı kontrolü
-        Reservation reservation = checkReservationStatus(reservationId);
-        //property validator
-        uniquePropertyValidator.checkUniqueProperties(reservation, reservationRequest);
-
-        Reservation updatedReservation = modelMapper.map(reservationRequest, Reservation.class);
-        updatedReservation.setId(reservationId);
-
-        reservationRepository.save(updatedReservation);
-
-        InstanceInfo instanceInfo = eurekaClient.getApplication("log-service").getInstances().get(0);
-
-        String baseUrl = instanceInfo.getHomePageUrl(); // http://localhost:8083
-        String path = "/log";
-        String servicePath = baseUrl + path;   // http://localhost:8083/log
-
-        AppLogRequest appLogDTO = new AppLogRequest();
-        appLogDTO.setLevel(AppLogLevel.INFO.name());
-        appLogDTO.setDescription("Reservation is updated by this id: " + reservation.getId());
-        appLogDTO.setTime(LocalDateTime.now());
-
-        ResponseEntity<String> logResponse = restTemplate.postForEntity(servicePath, appLogDTO, String.class);
-
-        if (!(logResponse.getStatusCode() == HttpStatus.CREATED)) {
-            throw new ResourceNotFoundException(ErrorMessages.LOG_NOT_CREATED);
+        // Tarihlerin geçerliliğini kontrol et
+        if (reservationRequest.getStartReservationDateTime().isAfter(reservationRequest.getEndReservationDateTime())) {
+            throw new IllegalArgumentException("Başlangıç tarihi bitiş tarihinden sonra olamaz.");
         }
 
-        return ResponseEntity.ok(mapReservationToReservationDTO(updatedReservation));
+        // Tarihlerdeki çakışmayı kontrol et
+        boolean isAvailable = checkReservationStatus(reservationRequest.getCarId(),
+                reservationRequest.getStartReservationDateTime(),
+                reservationRequest.getEndReservationDateTime());
+
+        if (!isAvailable) {
+            throw new ResourceNotFoundException("Belirtilen tarihler arasında araç zaten rezerve edilmiş.");
+        }
+
+        // Car ve User nesnelerini al
+        Car car = carService.isCarExistsById(reservationRequest.getCarId());
+        User user = userRepository.findById(reservationRequest.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("Kullanıcı bulunamadı."));
+
+        // Rezervasyonu güncelle
+        existingReservation.setStartReservationDateTime(reservationRequest.getStartReservationDateTime());
+        existingReservation.setEndReservationDateTime(reservationRequest.getEndReservationDateTime());
+        existingReservation.setCar(car);
+        existingReservation.setUser(user);
+
+        // Toplam fiyatı hesapla
+        long hours = ChronoUnit.HOURS.between(existingReservation.getStartReservationDateTime(), existingReservation.getEndReservationDateTime());
+        Double totalPrice = hours * existingReservation.getPricePerHour();
+        existingReservation.setTotalPrice(totalPrice);
+
+        // Rezervasyonu kaydet
+        reservationRepository.save(existingReservation);
+
+        sendLog("Update a Reservation: " + existingReservation.getId());
+
+        return ResponseEntity.ok(reservationMapper.mapReservationToReservationResponse(existingReservation));
     }
+
 
 
 
     //Not: getAllReservations() *********************************************************************
     public List<ReservationResponse> getAllReservations() {
-
         List<Reservation> reservationList = reservationRepository.findAll();
-        return reservationList.stream().map(this::mapReservationToReservationDTO).collect(Collectors.toList());
+        return reservationList.stream()
+                .map(reservationMapper::mapReservationToReservationResponse)
+                .collect(Collectors.toList());
     }
 
-    private ReservationResponse mapReservationToReservationDTO(Reservation reservation) {
-        return modelMapper.map(reservation, ReservationResponse.class);
-    }
+
 
     //Not: getById() ************************************************************************
+
     public ReservationResponse getById(Long reservationId) {
 
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, reservationId)));
 
-        ReservationResponse reservationResponse = mapReservationToReservationDTO(reservation);
-        return reservationResponse;
+    public ReservationResponse getById(Long id, String username) {
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, id)));
+
+        if (!reservation.getUser().getEmail().equals(username)) {
+            try {
+                throw new AccessDeniedException("Bu rezervasyona erişim izniniz yok.");
+            } catch (AccessDeniedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return reservationMapper.mapReservationToReservationResponse(reservation);
+    }
+
+
+    //Not: deleteReservation() ************************************************************************
+    @Transactional
+    public void deleteReservation(Long id) {
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, id)));
+
+
+        reservationRepository.delete(reservation);
+
+        sendLog("Reservation deleted: " + reservation.getId());
     }
 
     public boolean checkReservationStatus(Long reservationId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
@@ -136,8 +201,19 @@ public class ReservationService {
     }
 
     private Reservation checkReservationStatus(Long reservationId) {
+    return null;
     }
 
+    private void sendLog(String description) {
+        InstanceInfo instanceInfo = eurekaClient.getApplication("log-service").getInstances().get(0);
+        String baseUrl = instanceInfo.getHomePageUrl();
+        String path = "/log";
+        String servicePath = baseUrl + path;
+
+        AppLogRequest appLogDTO = new AppLogRequest();
+        appLogDTO.setLevel(AppLogLevel.INFO.name());
+        appLogDTO.setDescription(description);
+        appLogDTO.setTime(LocalDateTime.now());
 
     public ReservationResponse getOwnReservationInformation(
             HttpServletRequest httpServletRequest, Long resId) {
@@ -145,4 +221,5 @@ public class ReservationService {
         User user = userService.
         methodHelper.isReservationExistsById(resId);
     }
+
 }
