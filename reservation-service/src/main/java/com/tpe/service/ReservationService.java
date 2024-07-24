@@ -14,8 +14,8 @@ import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.payload.response.ReservationResponse;
 import com.tpe.repository.ReservationRepository;
 
-import com.tpe.service.helper.UserMethodHelper;
 import com.tpe.service.helper.ReservationMethodHelper;
+import com.tpe.service.helper.UserMethodHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -41,8 +41,9 @@ public class ReservationService {
     private final EurekaClient eurekaClient;
     private final RestTemplate restTemplate;
     private final CarService carService;
-    private final UserMethodHelper userMethodHelper;
     private final ReservationMethodHelper reservationMethodHelper;
+    private final UserMethodHelper userMethodHelper;
+
     private final UniquePropertyValidator uniquePropertyValidator;
 
     private final UserService userService;
@@ -143,7 +144,7 @@ public class ReservationService {
     }
 
     //Not: getById() ************************************************************************
-
+    //Admin idsi verilen reservation bilgilerine ulaşıyor.
     public ReservationResponse getById(Long reservationId) {
 
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() ->
@@ -151,6 +152,7 @@ public class ReservationService {
         return reservationMapper.mapReservationToReservationResponse(reservation);
     }
 
+    //User sadece kendi Reservation biligilerine ulaşıyor..
     public ReservationResponse getById(Long id, String username) {
         Reservation reservation = reservationRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, id)));
@@ -203,14 +205,13 @@ public class ReservationService {
     public ReservationResponse getOwnReservationInformation(
             HttpServletRequest httpServletRequest, Long resId) {
         String email = (String) httpServletRequest.getAttribute("username");
-        Reservation ownReservation = reservationMethodHelper.isReservationExistsById(resId);
         User user = userMethodHelper.isUserExistByEmail(email);
+        Reservation ownReservation = reservationMethodHelper.isReservationExistsById(resId);
         for (Reservation reservation : user.getReservationList()) {
             if (resId.equals(reservation.getId())) {
                 return reservationMapper.mapReservationToReservationResponse(reservation);
             }
         }
-        // Rezervasyon kullanıcının listesinde bulunamadıysa hata fırlat
-        throw new ResourceNotFoundException(String.format(ErrorMessages.RESERVATION_DOES_NOT_EXISTS_BY_ID, resId));
+        return null;
     }
 }
