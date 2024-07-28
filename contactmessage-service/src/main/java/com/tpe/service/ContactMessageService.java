@@ -1,7 +1,7 @@
 package com.tpe.service;
 
-import com.tpe.dto.ContactMessageRequest;
-import com.tpe.dto.ContactMessageResponse;
+import com.tpe.payload.ContactMessageRequest;
+import com.tpe.payload.ContactMessageResponse;
 import com.tpe.entity.ContactMessage;
 import com.tpe.exceptions.ResourceNotFoundException;
 import com.tpe.mapper.ContactMessageMapper;

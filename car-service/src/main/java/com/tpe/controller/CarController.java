@@ -1,18 +1,27 @@
 package com.tpe.controller;
 
+import com.tpe.domain.Car;
+import com.tpe.domain.ImageFile;
+import com.tpe.payload.ImageResponse;
+import com.tpe.payload.messages.ErrorMessages;
+import com.tpe.payload.messages.SuccessMessages;
 import com.tpe.payload.response.CarResponse;
-import com.tpe.dto.CarRequest;
+import com.tpe.payload.CarRequest;
 import com.tpe.service.CarService;
+import com.tpe.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/car")
@@ -20,6 +29,7 @@ import java.util.Map;
 public class CarController {
 
     private final CarService carService;
+    private final ImageService imageService;
 
     //Not: saveCar() *********************************************************************
     @PostMapping // http://localhost:8085/car   + POST
@@ -52,9 +62,6 @@ public class CarController {
         return carService.deleteCar(carId);
     }
 
-    //Not:upload image file
-    //Not:get all image file
-
     //Not: getAllCars() *********************************************************************
     @GetMapping("/allCars")
     //no pre authorize, everyone can get all cars.
@@ -71,22 +78,31 @@ public class CarController {
        return ResponseEntity.ok(carResponse);
     }
 
-//    @GetMapping("/{id}/image")
-//    public ImageResponse getCarImage(@PathVariable Long id) throws IOException {
-//        Optional<Car> carOptional = carService.findCarById(id);
-//
-//        if (carOptional.isPresent()) {
-//            Car car = carOptional.get();
-//            Optional<ImageFile> imageOptional = carService.getFirstImage(car);
-//
-//            if (imageOptional.isPresent()) {
-//                ImageFile imageFile = imageOptional.get();
-//                String base64Image = imageService.encodeImageToBase64(imageFile.getUrl());
-//                return new ImageResponse(base64Image);
-//            }
-//        }
-//        return new ImageResponse(""); // Ya da uygun bir hata mesajı dönebilir
-//    }
+    //get a image of the car
+    @GetMapping("/{carId}/image")
+    public ImageResponse getCarImage(@PathVariable Long carId) throws IOException {
+        return carService.getFirstImage(carId);
+    }
 
+    //upload image file
+    @PostMapping("/{id}/image")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<String> addCarImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) throws IOException {
+        carService.addImageToCar(id, image);
+        return ResponseEntity.ok(SuccessMessages.IMAGE_ADDED);
+    }
+
+    @PutMapping("/{id}/image")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<String> updateCarImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) throws IOException {
+        carService.updateCarImage(id, image);
+        return ResponseEntity.ok(SuccessMessages.IMAGE_UPDATED);
+    }
+
+    //get all images of the car
+    @GetMapping("/{id}/images")
+    public List<ImageResponse> getCarImages(@PathVariable Long id) throws IOException {
+        return carService.getAllImages(id);
+    }
 
 }
