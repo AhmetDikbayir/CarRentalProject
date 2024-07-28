@@ -5,6 +5,7 @@ import com.tpe.security.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -39,6 +40,8 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers(AUTH_WHITE_LIST).permitAll()
+                .antMatchers(HttpMethod.POST, "/car/{carId}/image").hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/car/{carId}/image").hasAnyAuthority("ADMIN")
                 .anyRequest().authenticated();
 
         http.headers().frameOptions().sameOrigin(); // ClickJacking tarzi saldirilari onlemek icin yazildi
@@ -102,7 +105,10 @@ public class WebSecurityConfig {
             "/contactMessages/save",
             "/user/signin",
             "/user/register",
-            "/car/allCars"
+            "/car/allCars",
+            "/car/{carId}/image",
+            "/car/{carId}/images"
+            //TODO: Add paths that do not require authentication.
     };
 
 }
