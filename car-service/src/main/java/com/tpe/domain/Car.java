@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -37,6 +39,14 @@ public class Car {
 
     @Column(nullable = false, unique = true)
     private String numberPlate;
+
+    @ManyToMany
+    @JoinTable(
+            name = "car_image",
+            joinColumns = @JoinColumn(name = "car_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id")
+    )
+    private Set<ImageFile> images = new HashSet<>();
 
     @Column(nullable = false)
     private boolean isAvailable;

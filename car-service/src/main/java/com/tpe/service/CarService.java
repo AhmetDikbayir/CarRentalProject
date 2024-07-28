@@ -3,6 +3,7 @@ package com.tpe.service;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
 import com.tpe.domain.Car;
+import com.tpe.domain.ImageFile;
 import com.tpe.dto.AppLogRequest;
 import com.tpe.dto.CarResponse;
 import com.tpe.dto.CarRequest;
@@ -164,6 +165,10 @@ public class CarService {
 
         CarResponse carResponse=mapCarToCarDTO(foundCar);
         return new ResponseEntity<>(carResponse, HttpStatus.OK);
+    }
+
+    public Optional<ImageFile> getFirstImage(Car car) {
+        return car.getImages().stream().findFirst();
     }
 
 

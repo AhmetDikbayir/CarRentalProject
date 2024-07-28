@@ -14,6 +14,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/car")
@@ -71,6 +72,23 @@ public class CarController {
        CarResponse carResponse = carService.getById(id);
        return ResponseEntity.ok(carResponse);
     }
+
+//    @GetMapping("/{id}/image")
+//    public ImageResponse getCarImage(@PathVariable Long id) throws IOException {
+//        Optional<Car> carOptional = carService.findCarById(id);
+//
+//        if (carOptional.isPresent()) {
+//            Car car = carOptional.get();
+//            Optional<ImageFile> imageOptional = carService.getFirstImage(car);
+//
+//            if (imageOptional.isPresent()) {
+//                ImageFile imageFile = imageOptional.get();
+//                String base64Image = imageService.encodeImageToBase64(imageFile.getUrl());
+//                return new ImageResponse(base64Image);
+//            }
+//        }
+//        return new ImageResponse(""); // Ya da uygun bir hata mesajı dönebilir
+//    }
 
 
 }
