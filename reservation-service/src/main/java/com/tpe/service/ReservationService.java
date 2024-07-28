@@ -5,7 +5,7 @@ import com.netflix.discovery.EurekaClient;
 import com.tpe.domain.Car;
 import com.tpe.domain.Reservation;
 import com.tpe.domain.User;
-import com.tpe.dto.AppLogRequest;
+import com.tpe.payload.request.AppLogRequest;
 import com.tpe.payload.mappers.ReservationMapper;
 import com.tpe.payload.request.ReservationRequest;
 import com.tpe.enums.AppLogLevel;

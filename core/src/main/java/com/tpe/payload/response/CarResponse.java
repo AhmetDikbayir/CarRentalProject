@@ -1,4 +1,4 @@
-package com.tpe.dto;
+package com.tpe.payload.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

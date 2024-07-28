@@ -1,7 +1,6 @@
 package com.tpe.controller;
 
-import com.tpe.domain.Car;
-import com.tpe.dto.CarResponse;
+import com.tpe.payload.response.CarResponse;
 import com.tpe.dto.CarRequest;
 import com.tpe.service.CarService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/car")
