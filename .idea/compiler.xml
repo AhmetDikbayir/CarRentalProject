@@ -24,7 +24,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="car-service" options="-parameters" />
       <module name="config" options="-parameters" />
-      <module name="contactmessage-service" options="" />
+      <module name="contactmessage-service" options="-parameters" />
       <module name="core" options="-parameters" />
       <module name="discovery" options="-parameters" />
       <module name="gateway" options="-parameters" />
