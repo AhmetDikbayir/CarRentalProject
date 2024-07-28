@@ -19,3 +19,10 @@ spring:
           uri: lb://log-service
           predicates:
             - Path=/log/**
+
+        - id: contactMessageModule
+          uri: lb://contactmessage-service
+          predicates:
+            - Path=/contactMessages/**
+
+# buraya diğer modüllerin eklenmesi lazım.
