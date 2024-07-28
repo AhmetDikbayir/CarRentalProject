@@ -1,9 +1,6 @@
 package com.tpe.controller;
 
-import com.tpe.domain.Car;
-import com.tpe.domain.ImageFile;
 import com.tpe.payload.ImageResponse;
-import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.payload.messages.SuccessMessages;
 import com.tpe.payload.response.CarResponse;
 import com.tpe.payload.CarRequest;
@@ -85,24 +82,24 @@ public class CarController {
     }
 
     //upload image file
-    @PostMapping("/{id}/image")
+    @PostMapping("/{carId}/image")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<String> addCarImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) throws IOException {
-        carService.addImageToCar(id, image);
+    public ResponseEntity<String> addCarImage(@PathVariable Long carId, @RequestParam("image") MultipartFile image) throws IOException {
+        carService.addImageToCar(carId, image);
         return ResponseEntity.ok(SuccessMessages.IMAGE_ADDED);
     }
 
-    @PutMapping("/{id}/image")
+    @PutMapping("/{carId}/image")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<String> updateCarImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) throws IOException {
-        carService.updateCarImage(id, image);
+    public ResponseEntity<String> updateCarImage(@PathVariable Long carId, @RequestParam("image") MultipartFile image) throws IOException {
+        carService.updateCarImage(carId, image);
         return ResponseEntity.ok(SuccessMessages.IMAGE_UPDATED);
     }
 
     //get all images of the car
-    @GetMapping("/{id}/images")
-    public List<ImageResponse> getCarImages(@PathVariable Long id) throws IOException {
-        return carService.getAllImages(id);
+    @GetMapping("/{carId}/images")
+    public List<ImageResponse> getCarImages(@PathVariable Long carId) throws IOException {
+        return carService.getAllImages(carId);
     }
 
 }
