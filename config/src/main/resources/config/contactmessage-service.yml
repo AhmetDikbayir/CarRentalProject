@@ -2,11 +2,10 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8097/eureka
-      # !!! yukarda discovery server adresini soyluyoruz
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/car_db
+    url: jdbc:postgresql://localhost:5432/contactmessage_db
     username: db_user
     password: db_password
 
