@@ -6,4 +6,4 @@ eureka:
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/contactmessage_db
+      uri: mongodb://localhost:27018/contactmessage_db
