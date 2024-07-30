@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,7 @@ public class ReportController {
     private ReportService reportService;
 
     @GetMapping("/users")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<byte[]> generateUserReport(@RequestParam String generatedBy) throws IOException {
         byte[] report = reportService.generateUserReport(generatedBy);
         return ResponseEntity.ok()
@@ -29,6 +31,7 @@ public class ReportController {
     }
 
     @GetMapping("/cars")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<byte[]> generateCarReport(@RequestParam String generatedBy) throws IOException {
         byte[] report = reportService.generateCarReport(generatedBy);
         return ResponseEntity.ok()
@@ -38,6 +41,7 @@ public class ReportController {
     }
 
     @GetMapping("/reservations")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<byte[]> generateReservationReport(@RequestParam String generatedBy) throws IOException {
         byte[] report = reportService.generateReservationReport(generatedBy);
         return ResponseEntity.ok()
