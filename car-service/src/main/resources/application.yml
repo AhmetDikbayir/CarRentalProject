@@ -8,16 +8,3 @@ spring:
   config:
     import: optional:configserver:http://localhost:8090
 
-  datasource:
-    url: jdbc:postgresql://localhost:5432/ecommerce_db
-    username: db_user
-    password: db_password
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.PostgreSQL81Dialect
-          format_sql: true
-    show-sql: false

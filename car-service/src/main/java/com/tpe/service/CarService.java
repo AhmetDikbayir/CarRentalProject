@@ -4,13 +4,13 @@ import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
 import com.tpe.domain.Car;
 import com.tpe.domain.ImageFile;
-import com.tpe.dto.AppLogRequest;
-import com.tpe.dto.CarResponse;
-import com.tpe.dto.CarRequest;
+import com.tpe.payload.ImageResponse;
+import com.tpe.payload.request.AppLogRequest;
+import com.tpe.payload.response.CarResponse;
+import com.tpe.payload.CarRequest;
 import com.tpe.enums.AppLogLevel;
 import com.tpe.exceptions.ConflictException;
 import com.tpe.exceptions.ResourceNotFoundException;
-import com.tpe.payload.bussiness.ResponseMessage;
 import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.payload.messages.SuccessMessages;
 import com.tpe.repository.CarRepository;
@@ -21,7 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +38,7 @@ public class CarService {
     private final EurekaClient eurekaClient;
     private final RestTemplate restTemplate;
     private final UniquePropertyValidator uniquePropertyValidator;
+    private final ImageService imageService;
 
     //Not: saveCar() *********************************************************************
     public void saveCar(CarRequest carRequest) {
@@ -167,8 +170,57 @@ public class CarService {
         return new ResponseEntity<>(carResponse, HttpStatus.OK);
     }
 
-    public Optional<ImageFile> getFirstImage(Car car) {
-        return car.getImages().stream().findFirst();
+    public ImageResponse getFirstImage(Long carId) throws IOException {
+        Car foundCar = isCarExistsById(carId);
+
+        Optional<ImageFile> imageOptional = foundCar.getImages().stream().findFirst();
+
+        if (imageOptional.isPresent()) {
+            ImageFile imageFile = imageOptional.get();
+            String base64Image = imageService.encodeImageToBase64(imageFile.getUrl());
+            return new ImageResponse(base64Image);
+        }
+        return new ImageResponse(ErrorMessages.IMAGE_NOT_FOUND);
+
+    }
+
+    @Transactional
+    public void addImageToCar(Long carId, MultipartFile image) throws IOException {
+        Car car = isCarExistsById(carId);
+        ImageFile imageFile = new ImageFile();
+        imageFile.setUrl(imageService.storeImage(image));
+        imageFile.getCars().add(car);
+        car.getImages().add(imageFile);
+        imageService.saveImage(imageFile);
+    }
+
+    @Transactional
+    public void updateCarImage(Long carId, MultipartFile image) throws IOException {
+        Car car = isCarExistsById(carId);
+        Optional<ImageFile> imageOptional = car.getImages().stream().findFirst();
+
+        if (imageOptional.isPresent()) {
+            ImageFile imageFile = imageOptional.get();
+            imageFile.setUrl(imageService.storeImage(image));
+            imageService.saveImage(imageFile);
+        } else {
+            addImageToCar(carId, image);
+        }
+    }
+
+    public List<ImageResponse> getAllImages(Long carId) throws IOException {
+        Car foundCar = isCarExistsById(carId);
+
+        return foundCar.getImages().stream()
+                .map(imageFile -> {
+                    try {
+                        String base64Image = imageService.encodeImageToBase64(imageFile.getUrl());
+                        return new ImageResponse(base64Image);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Error encoding image to Base64", e);
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
 

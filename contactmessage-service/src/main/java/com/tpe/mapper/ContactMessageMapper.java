@@ -1,7 +1,7 @@
 package com.tpe.mapper;
 
-import com.tpe.dto.ContactMessageRequest;
-import com.tpe.dto.ContactMessageResponse;
+import com.tpe.payload.ContactMessageRequest;
+import com.tpe.payload.ContactMessageResponse;
 import com.tpe.entity.ContactMessage;
 import org.springframework.stereotype.Component;
 

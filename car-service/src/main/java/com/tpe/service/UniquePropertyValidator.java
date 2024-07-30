@@ -1,7 +1,7 @@
 package com.tpe.service;
 
 import com.tpe.domain.Car;
-import com.tpe.dto.CarRequest;
+import com.tpe.payload.CarRequest;
 import com.tpe.exceptions.ConflictException;
 import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.repository.CarRepository;
