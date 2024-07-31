@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="core" />
+        <module name="contactmessage-service" />
         <module name="discovery" />
         <module name="reservation-service" />
         <module name="log-service" />
@@ -23,6 +24,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="car-service" options="-parameters" />
       <module name="config" options="-parameters" />
+      <module name="contactmessage-service" options="-parameters" />
       <module name="core" options="-parameters" />
       <module name="discovery" options="-parameters" />
       <module name="gateway" options="-parameters" />

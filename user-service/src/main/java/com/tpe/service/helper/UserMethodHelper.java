@@ -1,9 +1,9 @@
 package com.tpe.service.helper;
 
 import com.tpe.domain.User;
-import com.tpe.domain.enums.RoleType;
-import com.tpe.exception.BadRequestException;
-import com.tpe.exception.ResourceNotFoundException;
+import com.tpe.enums.RoleType;
+import com.tpe.exceptions.BadRequestException;
+import com.tpe.exceptions.ResourceNotFoundException;
 import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

@@ -19,3 +19,25 @@ spring:
           uri: lb://log-service
           predicates:
             - Path=/log/**
+
+        - id: contactMessageModule
+          uri: lb://contactmessage-service
+          predicates:
+            - Path=/contactMessages/**
+
+        - id: reportServiceModule
+          uri: lb://report-service
+          predicates:
+            - Path=//reports/**
+
+        - id: userServiceModule
+          uri: lb://user-service
+          predicates:
+            - Path=//users/**
+
+        - id: reservationServiceModule
+          uri: lb://reservation-service
+          predicates:
+            - Path=//reservations/**
+
+# buraya diğer modüllerin eklenmesi lazım.

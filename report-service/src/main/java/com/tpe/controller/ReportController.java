@@ -1,36 +1,49 @@
 package com.tpe.controller;
 
 import com.tpe.service.ReportService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/reports")
 public class ReportController {
 
-    private final ReportService reportService;
+    @Autowired
+    private ReportService reportService;
 
     @GetMapping("/users")
-    public ResponseEntity<String> generateUserReport() {
-        String report = reportService.generateUserReport();
-        return ResponseEntity.ok(report);
+    public ResponseEntity<byte[]> generateUserReport(@RequestParam String generatedBy) throws IOException {
+        byte[] report = reportService.generateUserReport(generatedBy);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=user_report.xlsx")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(report);
     }
 
     @GetMapping("/cars")
-    public ResponseEntity<String> generateCarReport() {
-        String report = reportService.generateCarReport();
-        return ResponseEntity.ok(report);
+    public ResponseEntity<byte[]> generateCarReport(@RequestParam String generatedBy) throws IOException {
+        byte[] report = reportService.generateCarReport(generatedBy);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=car_report.xlsx")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(report);
     }
 
     @GetMapping("/reservations")
-    public ResponseEntity<String> generateReservationReport() {
-        String report = reportService.generateReservationReport();
-        return ResponseEntity.ok(report);
+    public ResponseEntity<byte[]> generateReservationReport(@RequestParam String generatedBy) throws IOException {
+        byte[] report = reportService.generateReservationReport(generatedBy);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reservation_report.xlsx")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(report);
     }
 }
 

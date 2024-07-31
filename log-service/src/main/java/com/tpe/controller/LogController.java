@@ -1,7 +1,7 @@
 package com.tpe.controller;
 
 import com.tpe.domain.AppLog;
-import com.tpe.dto.AppLogRequest;
+import com.tpe.payload.request.AppLogRequest;
 import com.tpe.enums.AppLogLevel;
 import com.tpe.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;

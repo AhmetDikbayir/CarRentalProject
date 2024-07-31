@@ -1,4 +1,4 @@
-package com.tpe.dto;
+package com.tpe.payload;
 
 
 import lombok.AllArgsConstructor;
@@ -33,4 +33,5 @@ public class CarRequest {
     @NotNull
     //regex
     private String numberPlate;
+
 }

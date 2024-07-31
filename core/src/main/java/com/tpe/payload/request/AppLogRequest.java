@@ -1,4 +1,4 @@
-package com.tpe.dto;
+package com.tpe.payload.request;
 
 import java.time.LocalDateTime;
 

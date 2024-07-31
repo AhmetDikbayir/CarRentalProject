@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ReservationMethodHelper {
-
     private final ReservationService reservationService;
     private final ReservationRepository reservationRepository;
 

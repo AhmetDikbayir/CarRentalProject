@@ -1,5 +1,5 @@
 package com.tpe.domain;
-import com.tpe.domain.enums.RoleType;
+import com.tpe.enums.RoleType;
 
 import javax.persistence.*;
 

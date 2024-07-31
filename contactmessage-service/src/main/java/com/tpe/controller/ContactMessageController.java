@@ -1,7 +1,7 @@
 package com.tpe.controller;
 
-import com.tpe.dto.ContactMessageRequest;
-import com.tpe.dto.ContactMessageResponse;
+import com.tpe.payload.ContactMessageRequest;
+import com.tpe.payload.ContactMessageResponse;
 import com.tpe.entity.ContactMessage;
 import com.tpe.payload.bussiness.ResponseMessage;
 import com.tpe.service.ContactMessageService;
@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -27,6 +28,7 @@ public class ContactMessageController {
     }
 
     @GetMapping("/getAll") // http://localhost:8080/contactMessages/getAll + GET
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Page<ContactMessageResponse> getAll(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
@@ -37,6 +39,7 @@ public class ContactMessageController {
     }
 
     @GetMapping("/searchByEmail")  // http://localhost:8080/contactMessages/searchByEmail?email=aaa@bbb.com  + GET
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Page<ContactMessageResponse> searchByEmail(
             @RequestParam(value = "email") String email,
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -49,6 +52,7 @@ public class ContactMessageController {
 
     // Not: Odev : searchBySubject *******************************************
     @GetMapping("/searchBySubject")// http://localhost:8080/contactMessages/searchBySubject?subject=deneme
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public Page<ContactMessageResponse> searchBySubject(
             @RequestParam(value = "subject") String subject,
             @RequestParam(value = "page",defaultValue = "0") int page,
@@ -58,19 +62,20 @@ public class ContactMessageController {
         return contactMessageService.searchBySubject(subject,page,size,sort,type);
     }
 
-    // ODEV : No Content Type 204 kodu
     @DeleteMapping("/deleteById/{contactMessageId}") // http://localhost:8080/contactMessages/deleteById/2 + DELETE
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<String> deleteByIdPath(@PathVariable Long contactMessageId){
         return ResponseEntity.ok(contactMessageService.deleteById(contactMessageId));
     }
 
-    // Not: Odev2:deleteByIdParam ********************************************
     @DeleteMapping("/deleteByIdParam")  //http://localhost:8080/contactMessages/deleteByIdParam?contactMessageId=2
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<String> deleteById(@RequestParam(value = "contactMessageId") Long contactMessageId){
         return ResponseEntity.ok(contactMessageService.deleteById(contactMessageId)); // servisdeki ayni metod
     }
 
     @GetMapping("/searchBetweenDates")  //http://localhost:8080/contactMessages/searchBetweenDates?beginDate=2023-09-13&endDate=2023-09-15   + GET
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<List<ContactMessage>> searchBetweenDates(
             @RequestParam(value = "beginDate") String beginDateString,
             @RequestParam(value = "endDate") String endDateString
@@ -80,6 +85,7 @@ public class ContactMessageController {
     }
 
     @GetMapping("/searchBetweenTimes")//http://localhost:8080/contactMessages/searchBetweenTimes?startHour=09&startMinute=00&endHour=17&endMinute=30  + GET
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<List<ContactMessage>> searchBetweenTimes(
             @RequestParam(value = "startHour") String startHourString,
             @RequestParam(value = "startMinute") String startMinuteString,
@@ -92,11 +98,13 @@ public class ContactMessageController {
     }
 
     @GetMapping("/getByIdParam")//http://localhost:8080/contactMessages/getByIdParam?contactMessageId=1  + GET
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ContactMessage> getById(@RequestParam(value = "contactMessageId") Long contactMessageId){
         return ResponseEntity.ok(contactMessageService.getContactMessageById(contactMessageId));
     }
 
     @GetMapping("/getById/{contactMessageId}")//http://localhost:8080/contactMessages/getById/1  + GET
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ContactMessage> getByIdPath(@PathVariable Long contactMessageId) {
         return ResponseEntity.ok(contactMessageService.getContactMessageById(contactMessageId));
     }

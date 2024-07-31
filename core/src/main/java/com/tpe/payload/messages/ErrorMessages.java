@@ -37,4 +37,7 @@ public class ErrorMessages {
 
     public static final String RESERVATION_DOES_NOT_EXISTS_BY_ID = "Reservation not found by id %s";
 
+
+    public static final String IMAGE_NOT_FOUND = "Error: Image not found";
+
 }
