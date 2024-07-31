@@ -1,0 +1,13 @@
+discovery server : 8097	(euroka)
+user-service : 8096
+Log service: 8083
+Report service: 8089
+car-service : 8082
+config-service : 8090
+gateway service : 8085
+reservation-service:8091
+
+
+
+tüm başlıklar değişecek
+

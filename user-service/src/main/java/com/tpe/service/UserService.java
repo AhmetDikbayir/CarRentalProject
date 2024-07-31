@@ -8,9 +8,12 @@ import com.tpe.payload.mappers.UserMapper;
 import com.tpe.payload.messages.ErrorMessages;
 import com.tpe.payload.messages.SuccessMessages;
 import com.tpe.payload.request.*;
+import com.tpe.payload.response.SigninResponse;
 import com.tpe.payload.response.UserResponse;
 import com.tpe.repository.UserRepository;
 import com.tpe.repository.UserRoleRepository;
+import com.tpe.security.jwt.JwtUtils;
+import com.tpe.security.service.UserDetailsImpl;
 import com.tpe.service.helper.UserMethodHelper;
 import com.tpe.service.helper.PageableHelper;
 import com.tpe.service.validator.UniquePropertyValidator;
@@ -18,13 +21,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-/*
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-*/
+
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +37,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,8 +46,8 @@ import java.util.Objects;
 public class UserService {
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
-  //  public final JwtUtils jwtUtils;
-  //  public final AuthenticationManager authenticationManager;
+    public final JwtUtils jwtUtils;
+    public final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final UniquePropertyValidator uniquePropertyValidator;
     private final UserMapper userMapper;
@@ -49,7 +55,7 @@ public class UserService {
     private final UserRoleService userRoleService;
     private final UserMethodHelper methodHelper;
 
-/*
+
     public ResponseEntity<SigninResponse> authenticateUser(SigninRequest signInRequest) {
         String email = signInRequest.getEmail();
         String password = signInRequest.getPassword();
@@ -81,7 +87,7 @@ public class UserService {
         // SigninResponse nesnesi ResponseEntity ile donduruluyor
         return ResponseEntity.ok(signinResponse);
     }
-*/
+
     public ResponseEntity<UserResponse> register(UserRequestForRegister userRequestForRegister){
 
         //!!! username - ssn- phoneNumber unique mi kontrolu ??
@@ -303,4 +309,6 @@ public class UserService {
 
         return ResponseEntity.ok(SuccessMessages.PASSWORD_UPDATED);
     }
+
+
 }

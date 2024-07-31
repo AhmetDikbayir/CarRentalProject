@@ -95,7 +95,6 @@ public class WebSecurityConfig {
     private static final String[] AUTH_WHITE_LIST = {
             "/",
             "/v3/api-docs/**",
-            "/publishers",
             "swagger-ui.html",
             "/swagger-ui/**",
             "index.html",
@@ -103,11 +102,12 @@ public class WebSecurityConfig {
             "/css/**",
             "/js/**",
             "/contactMessages/save",
-            "/user/signin",
-            "/user/register",
+            "/users/signin",
+            "/users/register",
             "/car/allCars",
             "/car/{carId}/image",
-            "/car/{carId}/images"
+            "/car/{carId}/images",
+
             //TODO: Add paths that do not require authentication.
     };
 
