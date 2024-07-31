@@ -22,10 +22,10 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="car-service" options="-parameters" />
-      <module name="config" options="" />
+      <module name="config" options="-parameters" />
       <module name="core" options="-parameters" />
-      <module name="discovery" options="" />
-      <module name="gateway" options="" />
+      <module name="discovery" options="-parameters" />
+      <module name="gateway" options="-parameters" />
       <module name="log-service" options="-parameters" />
       <module name="report-service" options="-parameters" />
       <module name="reservation-service" options="-parameters" />
